@@ -1,0 +1,72 @@
+/* Revisão - ajustes que o Bootstrap não cobre */
+.study-arena-box {
+  max-width: 720px;
+}
+
+.study-card-box {
+  height: 390px;
+}
+
+/* Barra de progresso fina no topo */
+.progress-thin {
+  --bs-progress-height: 5px;
+  --bs-progress-bar-transition: width 0.3s ease;
+}
+
+/* Botões de avaliação espaçada (RN04: Difícil +10m, Bom +3d, Fácil +7d) */
+.btn-srs {
+  --bs-btn-padding-y: 0.85rem;
+  --bs-btn-padding-x: 1rem;
+  --bs-btn-border-radius: 12px;
+  --bs-btn-hover-color: #FFFFFF;
+  --bs-btn-active-color: #FFFFFF;
+}
+
+.btn-srs .srs-time {
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+}
+
+.btn-srs .srs-label {
+  font-size: 1.05rem;
+}
+
+.btn-srs-hard {
+  --bs-btn-bg: var(--bs-danger-bg-subtle);
+  --bs-btn-color: var(--bs-danger);
+  --bs-btn-border-color: rgba(var(--bs-danger-rgb), 0.25);
+  --bs-btn-hover-bg: var(--bs-danger);
+  --bs-btn-hover-border-color: rgba(var(--bs-danger-rgb), 0.25);
+  --bs-btn-active-bg: var(--bs-danger);
+  --bs-btn-active-border-color: rgba(var(--bs-danger-rgb), 0.25);
+}
+
+.btn-srs-good {
+  --bs-btn-bg: var(--bs-info-bg-subtle);
+  --bs-btn-color: var(--bs-info);
+  --bs-btn-border-color: rgba(var(--bs-info-rgb), 0.25);
+  --bs-btn-hover-bg: var(--bs-info);
+  --bs-btn-hover-border-color: rgba(var(--bs-info-rgb), 0.25);
+  --bs-btn-active-bg: var(--bs-info);
+  --bs-btn-active-border-color: rgba(var(--bs-info-rgb), 0.25);
+}
+
+.btn-srs-easy {
+  --bs-btn-bg: var(--bs-primary-bg-subtle);
+  --bs-btn-color: var(--bs-primary);
+  --bs-btn-border-color: rgba(var(--bs-primary-rgb), 0.25);
+  --bs-btn-hover-bg: var(--bs-primary);
+  --bs-btn-hover-border-color: rgba(var(--bs-primary-rgb), 0.25);
+  --bs-btn-active-bg: var(--bs-primary);
+  --bs-btn-active-border-color: rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Atalhos de teclado */
+kbd {
+  background-color: rgba(28, 36, 43, 0.08);
+  color: var(--bs-body-color);
+  font-size: 0.72rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+}

@@ -1,0 +1,13 @@
+/* Login - botões sociais (variáveis do .btn do Bootstrap) */
+.btn-social-google {
+  --bs-btn-bg: #FFFFFF;
+  --bs-btn-color: #1C242B;
+  --bs-btn-border-color: var(--bs-border-color);
+  --bs-btn-hover-bg: #F8FAFC;
+  --bs-btn-hover-color: #1C242B;
+  --bs-btn-hover-border-color: #BCC6D0;
+  --bs-btn-active-bg: #F8FAFC;
+  --bs-btn-active-color: #1C242B;
+  --bs-btn-active-border-color: #BCC6D0;
+}
+

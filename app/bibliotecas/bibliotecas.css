@@ -1,0 +1,17 @@
+/* Bibliotecas - item selecionável da lista (hover/ativo) */
+.deck-item {
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: all 0.18s ease;
+  cursor: pointer;
+}
+
+.deck-item:hover {
+  background-color: #F8FAFC;
+  border-color: var(--bs-border-color);
+}
+
+.deck-item.active {
+  background-color: var(--bs-primary-bg-subtle);
+  border-color: rgba(var(--bs-primary-rgb), 0.35);
+}

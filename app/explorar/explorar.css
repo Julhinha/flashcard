@@ -1,0 +1,9 @@
+/* Explorar - ajustes que o Bootstrap não cobre */
+.explore-card-box {
+  height: 310px;
+}
+
+.spinner-border-lg {
+  --bs-spinner-width: 3rem;
+  --bs-spinner-height: 3rem;
+}

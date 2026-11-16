@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sessão de Revisão (Modo Foco) | TI Flashcards - IFRJ</title>
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap 5 (CDN fallback + estrutura para /Dependencias/bootstrap.min.css) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <!-- Design System IFRJ -->
+    <link rel="stylesheet" href="../../css/global.css" />
+    <link rel="stylesheet" href="../../css/flashcard.css" />
+    <link rel="stylesheet" href="revisao.css" />
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <!-- Barra Minimalista Modo Foco -->
+    <nav class="navbar bg-white border-bottom py-2">
+      <div
+        class="container study-arena-box d-flex justify-content-between align-items-center"
+      >
+        <a
+          href="../dashboard/dashboard.html"
+          class="btn btn-sm btn-outline-secondary"
+        >
+          <i class="bi bi-arrow-left me-1"></i> Sair da Revisão
+        </a>
+
+        <div class="d-flex align-items-center gap-2">
+          <select
+            class="form-select form-select-sm"
+            id="filtroBaralhoRevisao"
+            onchange="filtrarFilaRevisao()"
+          >
+            <option value="todos">Todos os Baralhos Vencidos</option>
+            <option value="lib1">Arquitetura de Software</option>
+            <option value="lib2">Banco de Dados & SQL</option>
+            <option value="lib3">Linux & Redes</option>
+          </select>
+        </div>
+
+        <span
+          class="badge bg-primary-subtle text-primary-emphasis border border-success-subtle px-3 py-2"
+          id="contadorProgressoTexto"
+        >
+          Card 1 de 5
+        </span>
+      </div>
+    </nav>
+
+    <!-- Barra de Progresso Superior -->
+    <div class="progress progress-thin rounded-0">
+      <div
+        class="progress-bar bg-primary"
+        id="barraProgressoRevisao"
+        role="progressbar"
+        style="width: 20%"
+      ></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div
+      class="toast-container position-fixed bottom-0 end-0 p-3"
+      id="toastContainer"
+    ></div>
+
+    <main
+      class="container py-4 d-flex flex-column justify-content-center flex-grow-1"
+    >
+      <div class="study-arena-box w-100 mx-auto">
+        <!-- Arena do Card Ativo -->
+        <div id="arenaAtiva">
+          <div
+            class="flashcard-perspective study-card-box mb-4"
+            onclick="virarCardRevisao()"
+          >
+            <div
+              class="flashcard-inner position-relative w-100 h-100"
+              id="cardRevisaoInner"
+            >
+              <!-- Frente -->
+              <div
+                class="flashcard-face position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-between rounded-4 p-4 p-md-5"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <span
+                    class="badge bg-light text-secondary border"
+                    id="cardTagBiblioteca"
+                    >Arquitetura de Software</span
+                  >
+                  <span
+                    class="badge bg-info-subtle text-info"
+                    id="cardTagOrigem"
+                    >Manual</span
+                  >
+                </div>
+
+                <div class="my-auto text-center px-md-3">
+                  <p class="text-uppercase small text-muted fw-bold mb-2">
+                    Pergunta
+                  </p>
+                  <h2 class="h4 fw-bold lh-base mb-0" id="cardTextoFrente">
+                    O que significa a letra S no princípio SOLID?
+                  </h2>
+                </div>
+
+                <div class="text-center small text-muted">
+                  Clique no cartão ou pressione <kbd>Espaço</kbd> para revelar
+                </div>
+              </div>
+
+              <!-- Verso -->
+              <div
+                class="flashcard-face flashcard-back position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-between rounded-4 p-4 p-md-5"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="badge bg-primary-subtle text-primary-emphasis"
+                    >Resposta Técnica</span
+                  >
+                  <span class="small text-muted" id="cardRevisoesCount"
+                    >Revisado 4x</span
+                  >
+                </div>
+
+                <div class="my-auto text-center px-md-3">
+                  <h3
+                    class="h5 fw-bold text-dark lh-base mb-0"
+                    id="cardTextoVerso"
+                  >
+                    Single Responsibility Principle (Princípio da
+                    Responsabilidade Única) — uma classe deve ter apenas um
+                    motivo para mudar.
+                  </h3>
+                </div>
+
+                <div class="text-center small text-primary-emphasis fw-medium">
+                  Avalie seu nível de retenção abaixo
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botão Mostrar Resposta (Antes de virar) -->
+          <div id="areaBotaoMostrar" class="d-grid">
+            <button
+              type="button"
+              class="btn btn-primary btn-lg py-3"
+              onclick="virarCardRevisao()"
+            >
+              Mostrar Resposta <kbd class="ms-2 bg-white text-dark">Espaço</kbd>
+            </button>
+          </div>
+
+          <!-- Botões de Avaliação Espaçada (Após virar - Difícil +10m, Bom +3d, Fácil +7d) -->
+          <div id="areaBotoesAvaliacao" class="row g-3 d-none">
+            <div class="col-4">
+              <button
+                type="button"
+                class="btn btn-srs d-flex flex-column align-items-center justify-content-center btn-srs-hard w-100"
+                onclick="avaliarCard('dificil')"
+              >
+                <span class="srs-time fw-bold text-uppercase">+10 minutos</span>
+                <span class="srs-label fw-bold">Difícil (Errei)</span>
+                <kbd class="mt-1">1</kbd>
+              </button>
+            </div>
+            <div class="col-4">
+              <button
+                type="button"
+                class="btn btn-srs d-flex flex-column align-items-center justify-content-center btn-srs-good w-100"
+                onclick="avaliarCard('bom')"
+              >
+                <span class="srs-time fw-bold text-uppercase">+3 dias</span>
+                <span class="srs-label fw-bold">Bom (Lembrei)</span>
+                <kbd class="mt-1">2</kbd>
+              </button>
+            </div>
+            <div class="col-4">
+              <button
+                type="button"
+                class="btn btn-srs d-flex flex-column align-items-center justify-content-center btn-srs-easy w-100"
+                onclick="avaliarCard('facil')"
+              >
+                <span class="srs-time fw-bold text-uppercase">+7 dias</span>
+                <span class="srs-label fw-bold">Fácil (Dominei)</span>
+                <kbd class="mt-1">3</kbd>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tela de Conclusão da Fila -->
+        <div id="arenaConcluida" class="card p-5 text-center d-none">
+          <div
+            class="kpi-icon d-flex align-items-center justify-content-center kpi-icon-lg bg-primary-subtle text-primary-emphasis mx-auto mb-3"
+          >
+            <i class="bi bi-trophy-fill"></i>
+          </div>
+          <h2 class="h4 fw-bold mb-2">Parabéns! Fila de Revisão Concluída</h2>
+          <p class="text-muted mb-4">
+            Todos os flashcards vencidos foram reagendados no Firestore de
+            acordo com seu desempenho.
+          </p>
+          <div class="d-flex justify-content-center gap-2">
+            <a href="../dashboard/dashboard.html" class="btn btn-primary px-4"
+              >Voltar ao Dashboard</a
+            >
+            <a
+              href="../explorar/explorar.html"
+              class="btn btn-outline-primary px-4"
+              >Explorar Novos Cards</a
+            >
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/app-ui.js"></script>
+    <script src="revisao.js"></script>
+  </body>
+</html>

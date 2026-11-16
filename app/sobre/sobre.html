@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sobre e Arquitetura | TI Flashcards - IFRJ</title>
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap 5 (CDN fallback + estrutura para /Dependencias/bootstrap.min.css) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <!-- Design System IFRJ -->
+    <link rel="stylesheet" href="../../css/global.css" />
+    <link rel="stylesheet" href="sobre.css" />
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <!-- Navbar Institucional IFRJ -->
+    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+      <div class="container">
+        <a
+          class="navbar-brand d-flex align-items-center gap-2"
+          href="../dashboard/dashboard.html"
+        >
+          <!-- Logo SVG Modular IFRJ + Flashcards -->
+          <svg
+            width="36"
+            height="36"
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="13" cy="9" r="4" fill="#CD191E" />
+            <rect
+              x="19"
+              y="14"
+              width="16"
+              height="20"
+              rx="3"
+              fill="#1E6B2B"
+              opacity="0.75"
+              transform="rotate(8 27 24)"
+            />
+            <rect x="9" y="14" width="18" height="22" rx="3" fill="#2F9E41" />
+            <rect x="13" y="20" width="10" height="2" rx="1" fill="#FFFFFF" />
+            <rect
+              x="13"
+              y="25"
+              width="6"
+              height="2"
+              rx="1"
+              fill="#FFFFFF"
+              opacity="0.85"
+            />
+          </svg>
+          <span class="fw-bold fs-4 text-primary"
+            >TI<span class="text-dark">Flashcards</span></span
+          >
+          <span
+            class="badge bg-primary-subtle text-primary-emphasis border border-success-subtle ms-1 fs-xs"
+            >IFRJ</span
+          >
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarMain"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMain">
+          <ul class="navbar-nav nav-pills me-auto mb-2 mb-lg-0 ms-lg-4 gap-1">
+            <li class="nav-item">
+              <a class="nav-link" href="../dashboard/dashboard.html">
+                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../explorar/explorar.html">
+                <i class="bi bi-compass me-1"></i> Explorar API
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../bibliotecas/bibliotecas.html">
+                <i class="bi bi-collection me-1"></i> Minhas Bibliotecas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../revisao/revisao.html">
+                <i class="bi bi-lightning-charge me-1"></i> Revisão Anki
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="../sobre/sobre.html">
+                <i class="bi bi-info-circle me-1"></i> Sobre & Arquitetura
+              </a>
+            </li>
+          </ul>
+
+          <!-- Sino de Notificações + Perfil -->
+          <div class="d-flex align-items-center gap-3">
+            <div class="dropdown">
+              <button
+                class="btn btn-light border position-relative rounded-circle p-2"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-label="Notificações de revisão"
+              >
+                <i class="bi bi-bell-fill text-secondary"></i>
+                <span
+                  id="badgeNotificacoes"
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                >
+                  5
+                </span>
+              </button>
+              <div
+                class="dropdown-menu dropdown-menu-end dropdown-notificacoes shadow-sm p-3"
+              >
+                <div
+                  class="d-flex justify-content-between align-items-center mb-2"
+                >
+                  <span class="fw-bold small">Revisões Pendentes Hoje</span>
+                  <span
+                    class="badge bg-danger-subtle text-danger"
+                    id="dropdownPendCount"
+                    >5 cards</span
+                  >
+                </div>
+                <p class="small text-muted mb-3">
+                  Você possui flashcards vencidos aguardando revisão espaçada.
+                </p>
+                <div class="d-grid gap-2">
+                  <a
+                    href="../revisao/revisao.html"
+                    class="btn btn-primary btn-sm"
+                  >
+                    <i class="bi bi-play-fill me-1"></i> Iniciar Revisão Agora
+                  </a>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    onclick="dispararEmailLembrete()"
+                  >
+                    <i class="bi bi-envelope me-1"></i> Enviar Lembrete por
+                    E-mail
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown">
+              <button
+                class="btn btn-light border d-flex align-items-center gap-2 rounded-pill px-3 py-1"
+                type="button"
+                data-bs-toggle="dropdown"
+              >
+                <i class="bi bi-person-circle text-primary fs-5"></i>
+                <span
+                  class="small fw-semibold d-none d-sm-inline"
+                  id="navUserName"
+                  >Estudante IFRJ</span
+                >
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                <li>
+                  <span
+                    class="dropdown-item-text small text-muted"
+                    id="navUserEmail"
+                    >aluno@ifrj.edu.br</span
+                  >
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a
+                    class="dropdown-item text-danger"
+                    href="../login/login.html"
+                    id="btnLogout"
+                    ><i class="bi bi-box-arrow-right me-2"></i>Sair</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Toast Container para Feedbacks   -->
+    <div
+      class="toast-container position-fixed bottom-0 end-0 p-3"
+      id="toastContainer"
+    ></div>
+
+    <main class="container py-4 flex-grow-1">
+      <div class="card p-4 p-md-5 mb-4">
+        <span
+          class="badge bg-primary-subtle text-primary-emphasis align-self-start mb-2"
+          >Projeto Acadêmico • IFRJ</span
+        >
+        <h1 class="h2 fw-bold mb-2">
+          Arquitetura & Metodologia — TI Flashcards
+        </h1>
+        <p class="text-muted lead mb-0">
+          Sistema web de repetição espaçada desenvolvido para estudantes e
+          profissionais de Tecnologia da Informação, combinando rigor técnico
+          com engenharia de software moderna.
+        </p>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <!-- Por que sem IA Generativa -->
+        <div class="col-12 col-md-6">
+          <div class="card p-4 h-100">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div
+                class="kpi-icon d-flex align-items-center justify-content-center bg-danger-subtle text-danger"
+              >
+                <i class="bi bi-shield-exclamation"></i>
+              </div>
+              <h2 class="h5 fw-bold mb-0">
+                Confiabilidade de Dados (Sem IA Generativa)
+              </h2>
+            </div>
+            <p class="text-muted small mb-0 lh-lg">
+              Por decisão arquitetural (Regra de Precisão), o sistema
+              <strong>não utiliza Modelos de Linguagem (LLMs)</strong> para
+              gerar perguntas ou respostas. Em áreas técnicas de TI, alucinações
+              podem introduzir comandos inválidos ou conceitos errôneos. Todo o
+              conteúdo vem exclusivamente de bases revisadas (<strong
+                >QuizAPI.io v2</strong
+              >) ou da autoria do próprio estudante.
+            </p>
+          </div>
+        </div>
+
+        <!-- Algoritmo de Repetição Espaçada -->
+        <div class="col-12 col-md-6">
+          <div class="card p-4 h-100">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div
+                class="kpi-icon d-flex align-items-center justify-content-center bg-primary-subtle text-primary-emphasis"
+              >
+                <i class="bi bi-arrow-repeat"></i>
+              </div>
+              <h2 class="h5 fw-bold mb-0">Repetição Espaçada (Estilo Anki)</h2>
+            </div>
+            <p class="text-muted small mb-2 lh-lg">
+              Ao revisar um cartão, o estudante classifica sua facilidade de
+              lembrança, atualizando o campo <code>proximaRevisao</code> no
+              Cloud Firestore:
+            </p>
+            <ul class="small text-muted mb-0">
+              <li>
+                <strong class="text-danger">Difícil (Errei):</strong> Reagendado
+                para <code>+10 minutos</code>.
+              </li>
+              <li>
+                <strong class="text-primary">Bom (Lembrei):</strong> Reagendado
+                para <code>+3 dias</code>.
+              </li>
+              <li>
+                <strong class="text-primary">Fácil (Dominei):</strong>
+                Reagendado para <code>+7 dias</code>.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stack Tecnológica -->
+      <div class="card p-4 mb-4">
+        <h2 class="h5 fw-bold mb-3">Stack Tecnológica & Integrações</h2>
+        <div class="row g-3">
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded-3 border h-100">
+              <div class="fw-bold text-dark mb-1">
+                <i class="bi bi-bootstrap text-primary me-1"></i>Front-end
+              </div>
+              <div class="small text-muted">
+                HTML5, CSS3, Vanilla JS (ES6+) &amp; Bootstrap 5
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded-3 border h-100">
+              <div class="fw-bold text-dark mb-1">
+                <i class="bi bi-fire text-warning me-1"></i>Firebase
+              </div>
+              <div class="small text-muted">
+                Authentication (Google, E-mail) &amp; Cloud Firestore
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded-3 border h-100">
+              <div class="fw-bold text-dark mb-1">
+                <i class="bi bi-cloud-arrow-down text-primary me-1"></i>APIs
+                Externas
+              </div>
+              <div class="small text-muted">
+                QuizAPI.io (v2) &amp; EmailJS REST API
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-3 bg-light rounded-3 border h-100">
+              <div class="fw-bold text-dark mb-1">
+                <i class="bi bi-bar-chart-fill text-info me-1"></i>Analytics
+                &amp; Host
+              </div>
+              <div class="small text-muted">
+                Chart.js &amp; GitHub Pages (CI/CD)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Créditos Acadêmicos -->
+      <div class="card p-4">
+        <h2 class="h5 fw-bold mb-2">Integrantes & Instituição</h2>
+        <p class="small text-muted mb-3">
+          Trabalho desenvolvido para a disciplina de Desenvolvimento Web no
+          <strong>Instituto Federal do Rio de Janeiro (IFRJ)</strong>.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="badge bg-light text-dark border px-3 py-2"
+            >Integrante 1 (Desenvolvimento Front-end &amp; UX)</span
+          >
+          <span class="badge bg-light text-dark border px-3 py-2"
+            >Integrante 2 (Firebase &amp; Integração APIs)</span
+          >
+          <span class="badge bg-light text-dark border px-3 py-2"
+            >Integrante 3 (Documentação &amp; Testes)</span
+          >
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-white border-top py-3 mt-5">
+      <div
+        class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 small text-muted"
+      >
+        <div>
+          <strong class="text-dark">TI Flashcards</strong> — Projeto Web
+          Académico • <span class="text-primary fw-semibold">IFRJ</span>
+        </div>
+        <div>
+          Arquitetura v3.0 • Sem IA Generativa • Dados via QuizAPI.io &amp;
+          Firebase
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/app-ui.js"></script>
+    <script src="sobre.js"></script>
+  </body>
+</html>

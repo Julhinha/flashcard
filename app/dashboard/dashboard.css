@@ -1,0 +1,4 @@
+/* Dashboard - altura fixa dos gráficos (Chart.js) */
+.chart-box {
+  height: 240px;
+}

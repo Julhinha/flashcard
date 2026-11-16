@@ -1,0 +1,127 @@
+/* ==========================================================================
+   TI Flashcards (IFRJ) - Tema sobre o Bootstrap 5
+   Apenas variáveis da paleta IFRJ (sobrescrevendo as do Bootstrap) e
+   ajustes pontuais que o framework não cobre nativamente.
+   ========================================================================== */
+
+:root {
+  /* Paleta institucional IFRJ */
+  --bs-primary: #2F9E41;
+  --bs-primary-rgb: 47, 158, 65;
+  --bs-primary-bg-subtle: #EBF7EE;
+  --bs-primary-text-emphasis: #1E6B2B;
+
+  --bs-danger: #CD191E;
+  --bs-danger-rgb: 205, 25, 30;
+  --bs-danger-bg-subtle: #FDECEC;
+
+  --bs-warning: #E08E0B;
+  --bs-warning-rgb: 224, 142, 11;
+  --bs-warning-bg-subtle: #FFF8EC;
+  --bs-warning-text-emphasis: #9A6000;
+
+  --bs-info: #1967D2;
+  --bs-info-rgb: 25, 103, 210;
+  --bs-info-bg-subtle: #EBF3FC;
+
+  /* Neutros e superfícies */
+  --bs-body-bg: #F4F6F8;
+  --bs-body-color: #1C242B;
+  --bs-border-color: #DCE2E8;
+
+  /* Tipografia */
+  --bs-body-font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --bs-font-monospace: 'JetBrains Mono', monospace;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Botões primários em verde IFRJ */
+.btn-primary {
+  --bs-btn-font-weight: 600;
+  --bs-btn-bg: #2F9E41;
+  --bs-btn-border-color: #2F9E41;
+  --bs-btn-hover-bg: #1E6B2B;
+  --bs-btn-hover-border-color: #1E6B2B;
+  --bs-btn-active-bg: #1E6B2B;
+  --bs-btn-active-border-color: #1E6B2B;
+  --bs-btn-disabled-bg: #2F9E41;
+  --bs-btn-disabled-border-color: #2F9E41;
+  --bs-btn-focus-shadow-rgb: 47, 158, 65;
+}
+
+.btn-outline-primary {
+  --bs-btn-font-weight: 600;
+  --bs-btn-color: #2F9E41;
+  --bs-btn-border-color: #2F9E41;
+  --bs-btn-hover-bg: #2F9E41;
+  --bs-btn-hover-border-color: #2F9E41;
+  --bs-btn-active-bg: #2F9E41;
+  --bs-btn-active-border-color: #2F9E41;
+  --bs-btn-disabled-color: #2F9E41;
+  --bs-btn-disabled-border-color: #2F9E41;
+  --bs-btn-focus-shadow-rgb: 47, 158, 65;
+}
+
+/* Navbar */
+.navbar {
+  --bs-navbar-color: #5A6570;
+  --bs-navbar-hover-color: #2F9E41;
+  --bs-navbar-active-color: #1E6B2B;
+  --bs-navbar-nav-link-padding-x: 0.9rem;
+  box-shadow: 0 2px 10px rgba(28, 36, 43, 0.03);
+}
+
+/* Abas/menus em pílulas (navbar e abas do login) */
+.nav-pills {
+  --bs-nav-link-color: #5A6570;
+  --bs-nav-link-hover-color: #2F9E41;
+  --bs-nav-link-font-weight: 500;
+  --bs-nav-link-padding-x: 0.9rem;
+  --bs-nav-pills-border-radius: 8px;
+  --bs-nav-pills-link-active-color: #1E6B2B;
+  --bs-nav-pills-link-active-bg: #EBF7EE;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: var(--bs-primary-bg-subtle);
+}
+
+.nav-pills .nav-link.active {
+  font-weight: 600;
+}
+
+/* Cards */
+.card {
+  --bs-card-bg: #FFFFFF;
+  --bs-card-border-color: var(--bs-border-color);
+  --bs-card-border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(28, 36, 43, 0.04);
+}
+
+/* Ícone quadrado dos cards (KPIs e destaques) */
+.kpi-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  font-size: 1.4rem;
+}
+
+.kpi-icon-lg {
+  width: 64px;
+  height: 64px;
+  font-size: 2rem;
+}
+
+/* Dropdown de notificações da navbar */
+.dropdown-notificacoes {
+  --bs-dropdown-border-radius: 12px;
+  width: 300px;
+}
+
+/* Fonte menor que o `.small` do Bootstrap (badge IFRJ da logo) */
+.fs-xs {
+  font-size: 0.7rem;
+}
