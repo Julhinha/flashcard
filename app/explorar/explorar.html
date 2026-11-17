@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Explorar Conteúdo Oficial | TI Flashcards - IFRJ</title>
+    <title>Explorar Conteúdo Oficial | IFlashcard - IFRJ</title>
     <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,177 +27,7 @@
     <link rel="stylesheet" href="explorar.css" />
   </head>
   <body class="d-flex flex-column min-vh-100">
-    <!-- Navbar Institucional IFRJ -->
-    <nav class="navbar navbar-expand-xl bg-white border-bottom sticky-top">
-      <div class="container">
-        <a
-          class="navbar-brand d-flex align-items-center gap-2"
-          href="../dashboard/dashboard.html"
-        >
-          <!-- Logo SVG Modular IFRJ + Flashcards -->
-          <svg
-            width="36"
-            height="36"
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="13" cy="9" r="4" fill="#CD191E" />
-            <rect
-              x="19"
-              y="14"
-              width="16"
-              height="20"
-              rx="3"
-              fill="#1E6B2B"
-              opacity="0.75"
-              transform="rotate(8 27 24)"
-            />
-            <rect x="9" y="14" width="18" height="22" rx="3" fill="#2F9E41" />
-            <rect x="13" y="20" width="10" height="2" rx="1" fill="#FFFFFF" />
-            <rect
-              x="13"
-              y="25"
-              width="6"
-              height="2"
-              rx="1"
-              fill="#FFFFFF"
-              opacity="0.85"
-            />
-          </svg>
-          <span class="fw-bold fs-5 text-primary"
-            >TI<span class="text-dark">Flashcards</span></span
-          >
-          <span
-            class="badge bg-primary-subtle text-primary-emphasis border border-success-subtle ms-1 fs-xs"
-            >IFRJ</span
-          >
-        </a>
-
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarMain"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarMain">
-          <ul class="navbar-nav nav-pills flex-nowrap mb-2 mb-xl-0 ms-xl-2 gap-1">
-            <li class="nav-item">
-              <a class="nav-link" href="../dashboard/dashboard.html">
-                <i class="bi bi-speedometer2 me-1"></i> Dashboard
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="../explorar/explorar.html">
-                <i class="bi bi-compass me-1"></i> Explorar API
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="../bibliotecas/bibliotecas.html">
-                <i class="bi bi-collection me-1"></i> Minhas Bibliotecas
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="../revisao/revisao.html">
-                <i class="bi bi-lightning-charge me-1"></i> Revisão
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="../sobre/sobre.html">
-                <i class="bi bi-info-circle me-1"></i> Sobre & Arquitetura
-              </a>
-            </li>
-          </ul>
-
-          <!-- Sino de Notificações + Perfil -->
-          <div class="d-flex align-items-center gap-2 ms-xl-3 flex-shrink-0">
-            <div class="dropdown">
-              <button
-                class="btn btn-light border position-relative rounded-circle p-2"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-label="Notificações de revisão"
-              >
-                <i class="bi bi-bell-fill text-secondary"></i>
-                <span
-                  id="badgeNotificacoes"
-                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                >
-                  0
-                </span>
-              </button>
-              <div
-                class="dropdown-menu dropdown-menu-end dropdown-notificacoes shadow-sm p-3"
-              >
-                <div
-                  class="d-flex justify-content-between align-items-center mb-2"
-                >
-                  <span class="fw-bold small">Revisões Pendentes Hoje</span>
-                  <span
-                    class="badge bg-danger-subtle text-danger"
-                    id="dropdownPendCount"
-                    >0 cards</span
-                  >
-                </div>
-                <p class="small text-muted mb-3">
-                  Você possui flashcards vencidos aguardando revisão espaçada.
-                </p>
-                <div class="d-grid gap-2">
-                  <a
-                    href="../revisao/revisao.html"
-                    class="btn btn-primary btn-sm"
-                  >
-                    <i class="bi bi-play-fill me-1"></i> Iniciar Revisão Agora
-                  </a>
-                  <button
-                    type="button"
-                    class="btn btn-outline-secondary btn-sm"
-                    onclick="dispararEmailLembrete()"
-                  >
-                    <i class="bi bi-envelope me-1"></i> Enviar Lembrete por
-                    E-mail
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="dropdown">
-              <button
-                class="btn btn-light border d-flex align-items-center rounded-circle p-2"
-                aria-label="Perfil do usuário"
-                type="button"
-                data-bs-toggle="dropdown"
-              >
-                <i class="bi bi-person-circle text-primary fs-5"></i>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                <li>
-                  <span class="dropdown-item-text fw-semibold pb-0" id="navUserName">Estudante IFRJ</span>
-                </li>
-                <li>
-                  <span
-                    class="dropdown-item-text small text-muted pt-0"
-                    id="navUserEmail"
-                  ></span>
-                </li>
-                <li><hr class="dropdown-divider" /></li>
-                <li>
-                  <a
-                    class="dropdown-item text-danger"
-                    href="../login/login.html"
-                    id="btnLogout"
-                    ><i class="bi bi-box-arrow-right me-2"></i>Sair</a
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <script src="../../js/layout.js" data-componente="navbar" data-pagina="explorar"></script>
 
     <!-- Toast Container para Feedbacks   -->
     <div
@@ -214,7 +44,7 @@
             ><i class="bi bi-patch-check-fill me-1"></i>Fonte Verificada • Sem
             IA Generativa</span
           >
-          <h1 class="h3 fw-bold mb-1">Explorar Questões Técnicas</h1>
+          <h1 class="h3 fw-bold mb-1">Explorar Questões</h1>
           <p class="text-muted mb-0">
             Busque conceitos oficiais validados e importe para suas bibliotecas
             pessoais.
@@ -229,15 +59,58 @@
           onsubmit="buscarQuestoesAPI(event)"
         >
           <div class="col-12 col-md-5">
-            <label class="form-label small fw-semibold"
-              >Tecnologia / Categoria</label
-            >
-            <select class="form-select" id="filtroTecnologia">
-              <option value="18">Computers (Computação)</option>
-              <option value="30">Gadgets</option>
-              <option value="19">Mathematics (Matemática)</option>
-              <option value="17">Science &amp; Nature</option>
-            </select>
+            <label class="form-label small fw-semibold">Categoria</label>
+            <!-- Dropdown com busca: o valor (id da categoria) fica no input hidden -->
+            <input type="hidden" id="filtroCategoria" value="" />
+            <div class="dropdown">
+              <button
+                type="button"
+                class="form-select text-start"
+                id="btnCategoria"
+                data-bs-toggle="dropdown"
+                data-bs-auto-close="outside"
+                aria-expanded="false"
+              >
+                Todas as categorias
+              </button>
+              <div class="dropdown-menu w-100 p-2">
+                <input
+                  type="search"
+                  class="form-control form-control-sm mb-2"
+                  id="buscaCategoria"
+                  placeholder="Buscar categoria..."
+                  autocomplete="off"
+                />
+                <div class="categoria-lista" id="listaCategorias">
+                  <button type="button" class="dropdown-item active" data-valor="">Todas as categorias</button>
+                  <button type="button" class="dropdown-item" data-valor="9">General Knowledge</button>
+                  <button type="button" class="dropdown-item" data-valor="10">Entertainment: Books</button>
+                  <button type="button" class="dropdown-item" data-valor="11">Entertainment: Film</button>
+                  <button type="button" class="dropdown-item" data-valor="12">Entertainment: Music</button>
+                  <button type="button" class="dropdown-item" data-valor="13">Entertainment: Musicals &amp; Theatres</button>
+                  <button type="button" class="dropdown-item" data-valor="14">Entertainment: Television</button>
+                  <button type="button" class="dropdown-item" data-valor="15">Entertainment: Video Games</button>
+                  <button type="button" class="dropdown-item" data-valor="16">Entertainment: Board Games</button>
+                  <button type="button" class="dropdown-item" data-valor="17">Science &amp; Nature</button>
+                  <button type="button" class="dropdown-item" data-valor="18">Science: Computers</button>
+                  <button type="button" class="dropdown-item" data-valor="19">Science: Mathematics</button>
+                  <button type="button" class="dropdown-item" data-valor="20">Mythology</button>
+                  <button type="button" class="dropdown-item" data-valor="21">Sports</button>
+                  <button type="button" class="dropdown-item" data-valor="22">Geography</button>
+                  <button type="button" class="dropdown-item" data-valor="23">History</button>
+                  <button type="button" class="dropdown-item" data-valor="24">Politics</button>
+                  <button type="button" class="dropdown-item" data-valor="25">Art</button>
+                  <button type="button" class="dropdown-item" data-valor="26">Celebrities</button>
+                  <button type="button" class="dropdown-item" data-valor="27">Animals</button>
+                  <button type="button" class="dropdown-item" data-valor="28">Vehicles</button>
+                  <button type="button" class="dropdown-item" data-valor="29">Entertainment: Comics</button>
+                  <button type="button" class="dropdown-item" data-valor="30">Science: Gadgets</button>
+                  <button type="button" class="dropdown-item" data-valor="31">Entertainment: Japanese Anime &amp; Manga</button>
+                  <button type="button" class="dropdown-item" data-valor="32">Entertainment: Cartoon &amp; Animations</button>
+                </div>
+                <div class="small text-muted px-2 py-1 d-none" id="categoriaVazia">Nenhuma categoria encontrada.</div>
+              </div>
+            </div>
           </div>
 
           <div class="col-12 col-md-4">
@@ -268,13 +141,21 @@
           <span class="visually-hidden">Carregando...</span>
         </div>
         <p class="text-muted mt-3 fw-medium">
-          Consultando base técnica da Open Trivia DB...
+          Consultando a Open Trivia DB...
         </p>
       </div>
 
       <!-- Grid de Flashcards (Até 6 cartões com Flip 3D) -->
       <div class="row g-4" id="gridResultadosAPI">
-        <!-- Renderizado via explorar.js -->
+        <!-- Estado inicial: a busca só roda quando o usuário clica em "Buscar Questões".
+             Este conteúdo é substituído pelos cards via explorar.js -->
+        <div class="col-12">
+          <div class="text-center text-muted py-5">
+            <i class="bi bi-search fs-1 d-block mb-2"></i>
+            Escolha a categoria e a dificuldade e clique em
+            <strong>Buscar Questões</strong>.
+          </div>
+        </div>
       </div>
     </main>
 
@@ -306,7 +187,7 @@
                 Pergunta selecionada...
               </div>
               <div class="text-muted" id="previewModalVerso">
-                Resposta técnica...
+                Resposta...
               </div>
             </div>
           </div>
@@ -330,23 +211,11 @@
       </div>
     </div>
 
-    <footer class="bg-white border-top py-3 mt-5">
-      <div
-        class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 small text-muted"
-      >
-        <div>
-          <strong class="text-dark">TI Flashcards</strong> — Projeto Web
-          Académico • <span class="text-primary fw-semibold">IFRJ</span>
-        </div>
-        <div>
-          Arquitetura v3.0 • Sem IA Generativa • Dados via Open Trivia DB &amp;
-          Firebase
-        </div>
-      </div>
-    </footer>
+    <script src="../../js/layout.js" data-componente="rodape"></script>
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../env.local.js"></script>
     <script src="../../js/app-ui.js"></script>
     <script type="module" src="../../js/auth-guard.js"></script>
 

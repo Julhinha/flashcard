@@ -1,5 +1,5 @@
 /* ==========================================================================
-   TI Flashcards (IFRJ) - Tema sobre o Bootstrap 5
+   IFlashcard (IFRJ) - Tema sobre o Bootstrap 5
    Apenas variáveis da paleta IFRJ (sobrescrevendo as do Bootstrap) e
    ajustes pontuais que o framework não cobre nativamente.
    ========================================================================== */
@@ -95,10 +95,22 @@ body {
   white-space: nowrap;
 }
 
-/* Brand e menu nunca encolhem/quebram; só o espaço livre sobra no fim */
+/* Brand, toggler e menu nunca encolhem indevidamente */
 .navbar-brand,
-.navbar-nav {
+.navbar-nav,
+.navbar-toggler {
   flex-shrink: 0;
+}
+
+.navbar-toggler {
+  padding: 0.35rem 0.55rem;
+  font-size: 1.15rem;
+  border-radius: 8px;
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.15rem rgba(47, 158, 65, 0.25);
+  outline: none;
 }
 
 @media (min-width: 1200px) {
@@ -155,6 +167,7 @@ body {
 .dropdown-notificacoes {
   --bs-dropdown-border-radius: 12px;
   width: 300px;
+  max-width: calc(100vw - 2rem);
 }
 
 /* Fonte menor que o `.small` do Bootstrap (badge IFRJ da logo) */

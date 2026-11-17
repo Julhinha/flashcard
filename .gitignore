@@ -4,3 +4,5 @@
 serviceAccount*.json
 *-firebase-adminsdk-*.json
 .env
+env.local.js
+.env.local

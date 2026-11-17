@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sessão de Revisão (Modo Foco) | TI Flashcards - IFRJ</title>
+    <title>Sessão de Revisão (Modo Foco) | IFlashcard - IFRJ</title>
     <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -78,8 +78,22 @@
       class="container py-4 d-flex flex-column justify-content-center flex-grow-1"
     >
       <div class="study-arena-box w-100 mx-auto">
+        <!-- Estado de carregamento (some quando a fila é carregada) -->
+        <div id="arenaCarregando" class="text-center py-5">
+          <div
+            class="spinner-border text-primary"
+            style="width: 3rem; height: 3rem"
+            role="status"
+          >
+            <span class="visually-hidden">Carregando...</span>
+          </div>
+          <p class="text-muted mt-3 fw-medium mb-0">
+            Carregando seus flashcards...
+          </p>
+        </div>
+
         <!-- Arena do Card Ativo -->
-        <div id="arenaAtiva">
+        <div id="arenaAtiva" class="d-none">
           <div
             class="flashcard-perspective study-card-box mb-4"
             onclick="virarCardRevisao()"
@@ -123,7 +137,7 @@
               >
                 <div class="d-flex justify-content-between align-items-center">
                   <span class="badge bg-primary-subtle text-primary-emphasis"
-                    >Resposta Técnica</span
+                    >Resposta</span
                   >
                   <span class="small text-muted" id="cardRevisoesCount"></span>
                 </div>
@@ -220,6 +234,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../env.local.js"></script>
     <script src="../../js/app-ui.js"></script>
     <script type="module" src="../../js/auth-guard.js"></script>
     <script type="module" src="revisao.js"></script>

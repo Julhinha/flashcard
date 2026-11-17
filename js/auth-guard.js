@@ -1,6 +1,8 @@
 // Protege as páginas internas: sem sessão, volta para o login.
 // Também preenche nome/e-mail do usuário, o sino de pendências, o perfil
 // (preferência de lembretes e último envio) e liga o botão "Sair".
+// O lembrete diário automático NÃO é enviado aqui: quem envia é o workflow
+// .github/workflows/notificacao-diaria.yml (scripts/notificacao-diaria.js).
 import { auth, db } from "./firebase-config.js";
 import {
   onAuthStateChanged,
@@ -17,7 +19,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const LOGIN_URL = new URL("../app/login/login.html", import.meta.url).href;
-const UM_DIA_MS = 24 * 60 * 60 * 1000;
 const UMA_HORA_MS = 60 * 60 * 1000;
 
 function setText(id, texto) {
@@ -74,18 +75,6 @@ function registrarAcesso(perfil) {
     .catch((erro) => console.error("Erro ao registrar último acesso:", erro));
 }
 
-// Lembrete automático: ao abrir o dashboard com o switch ligado, envia no máximo 1 e-mail por dia
-async function verificarLembreteDiario(perfil, pendentes) {
-  const noDashboard = document.getElementById("switchEmailNotif");
-  if (!noDashboard || perfil.notificacoes_email !== true || pendentes === 0) return;
-
-  const ultimo = perfil.ultimo_email_enviado_em;
-  const jaEnviouHoje = ultimo && Date.now() - new Date(ultimo).getTime() < UM_DIA_MS;
-  if (!jaEnviouHoje && typeof window.dispararEmailLembrete === "function") {
-    await window.dispararEmailLembrete(true);
-  }
-}
-
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.replace(LOGIN_URL);
@@ -105,7 +94,7 @@ onAuthStateChanged(auth, async (user) => {
       { merge: true },
     );
 
-  const [pendentes, perfil] = await Promise.all([
+  const [, perfil] = await Promise.all([
     atualizarContadorPendentes(user.uid),
     carregarPerfil(user.uid),
   ]);
@@ -117,7 +106,6 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   registrarAcesso(perfil);
-  await verificarLembreteDiario(perfil, pendentes);
 });
 
 const btnLogout = document.getElementById("btnLogout");

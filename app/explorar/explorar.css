@@ -7,3 +7,9 @@
   --bs-spinner-width: 3rem;
   --bs-spinner-height: 3rem;
 }
+
+/* Dropdown de categoria com busca */
+.categoria-lista {
+  max-height: 260px;
+  overflow-y: auto;
+}

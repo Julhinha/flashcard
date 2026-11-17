@@ -6,14 +6,17 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-// Suas credenciais do projeto ti-flashcard-ifrj
+const env = window.ENV_LOCAL || {};
+
+// Credenciais carregadas localmente (env.local.js) ou injetadas via GitHub Secrets
 const firebaseConfig = {
-  apiKey: "AIzaSyA0KO6KZS2MvVPmqM5Hb2d3gJEQgfEvUQs",
-  authDomain: "ti-flashcard-ifrj.firebaseapp.com",
-  projectId: "ti-flashcard-ifrj",
-  storageBucket: "ti-flashcard-ifrj.firebasestorage.app",
-  messagingSenderId: "77296619603",
-  appId: "1:77296619603:web:39743e4aba7fe1ddc776a6",
+  apiKey: env.FIREBASE_API_KEY || "__FIREBASE_API_KEY__",
+  authDomain: env.FIREBASE_AUTH_DOMAIN || "__FIREBASE_AUTH_DOMAIN__",
+  projectId: env.FIREBASE_PROJECT_ID || "__FIREBASE_PROJECT_ID__",
+  storageBucket: env.FIREBASE_STORAGE_BUCKET || "__FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId:
+    env.FIREBASE_MESSAGING_SENDER_ID || "__FIREBASE_MESSAGING_SENDER_ID__",
+  appId: env.FIREBASE_APP_ID || "__FIREBASE_APP_ID__",
 };
 
 // Inicializa o Firebase e exporta os serviços para as outras telas usarem

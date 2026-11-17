@@ -202,5 +202,7 @@ onAuthStateChanged(auth, async (user) => {
   } catch (erro) {
     console.error("Erro ao carregar a fila de revisão:", erro);
     mostrarToast("Erro ao carregar flashcards do Firestore.", "danger");
+  } finally {
+    document.getElementById("arenaCarregando").classList.add("d-none");
   }
 });

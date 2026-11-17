@@ -18,7 +18,7 @@
 // Variáveis de ambiente:
 //   FIREBASE_SERVICE_ACCOUNT  (obrigatória) JSON completo da conta de serviço
 //   EMAILJS_PRIVATE_KEY       (obrigatória, exceto em DRY_RUN) Private Key do EmailJS
-//   EMAILJS_SERVICE_ID / EMAILJS_TEMPLATE_ID / EMAILJS_PUBLIC_KEY  (opcionais)
+//   EMAILJS_SERVICE_ID / EMAILJS_TEMPLATE_ID / EMAILJS_PUBLIC_KEY  (obrigatórias, exceto em DRY_RUN)
 //   SITE_URL                  (opcional) padrão: GitHub Pages do repositório
 //   DRY_RUN=1                 (opcional) só lista o que seria enviado
 
@@ -33,9 +33,9 @@ const INTERVALO_INATIVIDADE_MS = DIAS_INATIVIDADE * DIA_MS; // aviso de inativid
 const PAUSA_ENTRE_ENVIOS_MS = 1100; // o EmailJS limita a ~1 requisição por segundo
 
 const EMAILJS = {
-  serviceId: process.env.EMAILJS_SERVICE_ID || "service_6uzztj7",
-  templateId: process.env.EMAILJS_TEMPLATE_ID || "template_15h0lxf",
-  publicKey: process.env.EMAILJS_PUBLIC_KEY || "ZtM6CKm2vtxsn8yhU",
+  serviceId: process.env.EMAILJS_SERVICE_ID,
+  templateId: process.env.EMAILJS_TEMPLATE_ID,
+  publicKey: process.env.EMAILJS_PUBLIC_KEY,
   privateKey: process.env.EMAILJS_PRIVATE_KEY,
 };
 
@@ -66,16 +66,27 @@ function decidirEnvio({ pendentes, ultimoAcessoIso, ultimoEnvioIso, agoraMs }) {
   }
 
   // Sem cards pendentes: só avisa se o usuário sumiu há DIAS_INATIVIDADE dias ou mais
-  const ultimoAcesso = ultimoAcessoIso ? new Date(ultimoAcessoIso).getTime() : NaN;
+  const ultimoAcesso = ultimoAcessoIso
+    ? new Date(ultimoAcessoIso).getTime()
+    : NaN;
   if (Number.isNaN(ultimoAcesso)) {
-    return { enviar: false, motivo: "sem cards pendentes e sem registro de último acesso" };
+    return {
+      enviar: false,
+      motivo: "sem cards pendentes e sem registro de último acesso",
+    };
   }
   const diasInativo = Math.floor((agoraMs - ultimoAcesso) / DIA_MS);
   if (diasInativo < DIAS_INATIVIDADE) {
-    return { enviar: false, motivo: `sem cards pendentes (último acesso há ${diasInativo} dia(s))` };
+    return {
+      enviar: false,
+      motivo: `sem cards pendentes (último acesso há ${diasInativo} dia(s))`,
+    };
   }
   if (enviadoDentroDe(ultimoEnvioIso, agoraMs, INTERVALO_INATIVIDADE_MS)) {
-    return { enviar: false, motivo: `aviso de inatividade já enviado nos últimos ${DIAS_INATIVIDADE} dias` };
+    return {
+      enviar: false,
+      motivo: `aviso de inatividade já enviado nos últimos ${DIAS_INATIVIDADE} dias`,
+    };
   }
   return { enviar: true, tipo: "inatividade", diasInativo };
 }
@@ -84,15 +95,15 @@ function decidirEnvio({ pendentes, ultimoAcessoIso, ultimoEnvioIso, agoraMs }) {
 function montarMensagem(decisao, pendentes) {
   if (decisao.tipo === "inatividade") {
     return {
-      assunto: "TI Flashcards: sentimos sua falta!",
+      assunto: "IFlashcard: sentimos sua falta!",
       mensagem: "Sentimos sua falta! Retome seus estudos de onde parou.",
-      destaque: `Faz ${decisao.diasInativo} dias que você não acessa o TI Flashcards.`,
+      destaque: `Faz ${decisao.diasInativo} dias que você não acessa o IFlashcard.`,
       botao: "Voltar a Estudar",
       cor_destaque: "#0d6efd",
     };
   }
   return {
-    assunto: `TI Flashcards: você tem ${pendentes} card(s) para revisar!`,
+    assunto: `IFlashcard: você tem ${pendentes} card(s) para revisar!`,
     mensagem: "Sua fila de repetição espaçada (Anki) está aguardando por você.",
     destaque: `${pendentes} flashcard(s) pendente(s) para revisão hoje!`,
     botao: "Revisar Meus Cards Agora",
@@ -119,7 +130,10 @@ function criarJwt(conta, agoraSeg) {
     exp: agoraSeg + 3600,
   };
   const dados = `${base64url(JSON.stringify(cabecalho))}.${base64url(JSON.stringify(corpo))}`;
-  const assinatura = crypto.createSign("RSA-SHA256").update(dados).sign(conta.private_key);
+  const assinatura = crypto
+    .createSign("RSA-SHA256")
+    .update(dados)
+    .sign(conta.private_key);
   return `${dados}.${base64url(assinatura)}`;
 }
 
@@ -133,7 +147,9 @@ async function obterToken(conta) {
     }),
   });
   if (!resposta.ok) {
-    throw new Error(`Falha ao autenticar no Google (${resposta.status}): ${await resposta.text()}`);
+    throw new Error(
+      `Falha ao autenticar no Google (${resposta.status}): ${await resposta.text()}`,
+    );
   }
   return (await resposta.json()).access_token;
 }
@@ -149,7 +165,9 @@ function montarConsulta(colecao, campo, valor, camposRetornados) {
     },
   };
   if (camposRetornados) {
-    consulta.select = { fields: camposRetornados.map((fieldPath) => ({ fieldPath })) };
+    consulta.select = {
+      fields: camposRetornados.map((fieldPath) => ({ fieldPath })),
+    };
   }
   return { structuredQuery: consulta };
 }
@@ -162,16 +180,22 @@ function lerValor(v) {
 }
 
 function lerCampos(fields = {}) {
-  return Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, lerValor(v)]));
+  return Object.fromEntries(
+    Object.entries(fields).map(([k, v]) => [k, lerValor(v)]),
+  );
 }
 
 async function consultar(ctx, consulta) {
   const resposta = await fetch(`${ctx.base}:runQuery`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${ctx.token}`, "Content-Type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${ctx.token}`,
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(consulta),
   });
-  if (!resposta.ok) throw new Error(`Firestore ${resposta.status}: ${await resposta.text()}`);
+  if (!resposta.ok)
+    throw new Error(`Firestore ${resposta.status}: ${await resposta.text()}`);
   // Resultados vazios vêm como itens sem "document"
   return (await resposta.json())
     .filter((item) => item.document)
@@ -185,16 +209,29 @@ async function gravarUltimoEnvio(ctx, uid, iso) {
   const url = `${ctx.base}/usuarios/${encodeURIComponent(uid)}?updateMask.fieldPaths=ultimo_email_enviado_em`;
   const resposta = await fetch(url, {
     method: "PATCH",
-    headers: { Authorization: `Bearer ${ctx.token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ fields: { ultimo_email_enviado_em: { stringValue: iso } } }),
+    headers: {
+      Authorization: `Bearer ${ctx.token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      fields: { ultimo_email_enviado_em: { stringValue: iso } },
+    }),
   });
-  if (!resposta.ok) throw new Error(`Firestore ${resposta.status}: ${await resposta.text()}`);
+  if (!resposta.ok)
+    throw new Error(`Firestore ${resposta.status}: ${await resposta.text()}`);
 }
 
 // ---------------------------------------------------------------
 // EmailJS
 // ---------------------------------------------------------------
-async function enviarEmail({ email, nome, pendentes, linkRevisao, decisao, textos }) {
+async function enviarEmail({
+  email,
+  nome,
+  pendentes,
+  linkRevisao,
+  decisao,
+  textos,
+}) {
   const resposta = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -214,7 +251,8 @@ async function enviarEmail({ email, nome, pendentes, linkRevisao, decisao, texto
       },
     }),
   });
-  if (!resposta.ok) throw new Error(`EmailJS ${resposta.status}: ${await resposta.text()}`);
+  if (!resposta.ok)
+    throw new Error(`EmailJS ${resposta.status}: ${await resposta.text()}`);
 }
 
 // ---------------------------------------------------------------
@@ -224,17 +262,31 @@ async function main() {
   const dryRun = process.env.DRY_RUN === "1";
 
   if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
-    throw new Error("Defina o secret FIREBASE_SERVICE_ACCOUNT (JSON da conta de serviço).");
+    throw new Error(
+      "Defina o secret FIREBASE_SERVICE_ACCOUNT (JSON da conta de serviço).",
+    );
   }
   if (!dryRun && !EMAILJS.privateKey) {
-    throw new Error("Defina o secret EMAILJS_PRIVATE_KEY (EmailJS > Account > API keys).");
+    throw new Error(
+      "Defina o secret EMAILJS_PRIVATE_KEY (EmailJS > Account > API keys).",
+    );
+  }
+  if (
+    !dryRun &&
+    (!EMAILJS.serviceId || !EMAILJS.templateId || !EMAILJS.publicKey)
+  ) {
+    throw new Error(
+      "Defina os secrets EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID e EMAILJS_PUBLIC_KEY.",
+    );
   }
 
   let conta;
   try {
     conta = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
   } catch {
-    throw new Error("FIREBASE_SERVICE_ACCOUNT não é um JSON válido (cole o arquivo inteiro).");
+    throw new Error(
+      "FIREBASE_SERVICE_ACCOUNT não é um JSON válido (cole o arquivo inteiro).",
+    );
   }
 
   const ctx = {
@@ -249,7 +301,9 @@ async function main() {
     ctx,
     montarConsulta("usuarios", "notificacoes_email", { booleanValue: true }),
   );
-  console.log(`${usuarios.length} usuário(s) com notificações diárias ativadas.${dryRun ? " [DRY RUN]" : ""}`);
+  console.log(
+    `${usuarios.length} usuário(s) com notificações diárias ativadas.${dryRun ? " [DRY RUN]" : ""}`,
+  );
 
   let enviados = 0;
   let falhas = 0;
@@ -258,9 +312,14 @@ async function main() {
     try {
       const cards = await consultar(
         ctx,
-        montarConsulta("flashcards", "usuario_id", { stringValue: uid }, ["proxima_revisao"]),
+        montarConsulta("flashcards", "usuario_id", { stringValue: uid }, [
+          "proxima_revisao",
+        ]),
       );
-      const pendentes = contarPendentes(cards.map((c) => c.dados), agora.toISOString());
+      const pendentes = contarPendentes(
+        cards.map((c) => c.dados),
+        agora.toISOString(),
+      );
 
       // Regras 2 e 3: pendências ou inatividade de 10 dias
       const decisao = decidirEnvio({
@@ -281,7 +340,9 @@ async function main() {
 
       const textos = montarMensagem(decisao, pendentes);
       if (dryRun) {
-        console.log(`- ${uid}: enviaria "${decisao.tipo}" para ${perfil.email} (${pendentes} pendente(s)).`);
+        console.log(
+          `- ${uid}: enviaria "${decisao.tipo}" para ${perfil.email} (${pendentes} pendente(s)).`,
+        );
         continue;
       }
 
@@ -295,7 +356,9 @@ async function main() {
       });
       await gravarUltimoEnvio(ctx, uid, new Date().toISOString());
       enviados++;
-      console.log(`- ${uid}: "${decisao.tipo}" enviado para ${perfil.email} (${pendentes} pendente(s)).`);
+      console.log(
+        `- ${uid}: "${decisao.tipo}" enviado para ${perfil.email} (${pendentes} pendente(s)).`,
+      );
       await pausa(PAUSA_ENTRE_ENVIOS_MS);
     } catch (erro) {
       falhas++;

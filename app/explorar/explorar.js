@@ -1,4 +1,5 @@
 import { auth, db } from "../../js/firebase-config.js";
+import { escaparHTML } from "../../js/utils.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {
   collection,
@@ -12,7 +13,47 @@ let usuarioAtual = null;
 let questoesAtuaisAPI = []; // Guarda os resultados do fetch atual
 let cardSelecionadoParaImportar = null;
 
-// 1. Verifica usuário logado e carrega as bibliotecas dele no Modal
+// Dropdown de categoria com busca: filtra a lista e grava o id no input hidden
+const inputCategoria = document.getElementById("filtroCategoria");
+const btnCategoria = document.getElementById("btnCategoria");
+const buscaCategoria = document.getElementById("buscaCategoria");
+const itensCategoria = document.querySelectorAll("#listaCategorias .dropdown-item");
+const categoriaVazia = document.getElementById("categoriaVazia");
+
+buscaCategoria.addEventListener("input", () => {
+  const termo = buscaCategoria.value.trim().toLowerCase();
+  let visiveis = 0;
+  itensCategoria.forEach((item) => {
+    const mostrar = item.textContent.toLowerCase().includes(termo);
+    item.classList.toggle("d-none", !mostrar);
+    if (mostrar) visiveis++;
+  });
+  categoriaVazia.classList.toggle("d-none", visiveis > 0);
+});
+
+itensCategoria.forEach((item) => {
+  item.addEventListener("click", () => {
+    inputCategoria.value = item.dataset.valor;
+    btnCategoria.textContent = item.textContent;
+    itensCategoria.forEach((i) => i.classList.toggle("active", i === item));
+    bootstrap.Dropdown.getOrCreateInstance(btnCategoria).hide();
+  });
+});
+
+// Ao abrir, limpa a busca e foca no campo
+btnCategoria.addEventListener("shown.bs.dropdown", () => {
+  buscaCategoria.value = "";
+  buscaCategoria.dispatchEvent(new Event("input"));
+  buscaCategoria.focus();
+});
+
+// Enter na caixa de busca não pode enviar o formulário (disparava uma consulta à API)
+buscaCategoria.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") e.preventDefault();
+});
+
+// 1. Verifica usuário logado e carrega as bibliotecas dele no Modal.
+// A busca na API só acontece quando o usuário clica em "Buscar Questões".
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "../login/login.html"; // Ajuste se necessário
@@ -20,7 +61,6 @@ onAuthStateChanged(auth, async (user) => {
   }
   usuarioAtual = user;
   await carregarBibliotecasNoSelect();
-  buscarQuestoesAPI(); // Já faz a busca inicial ao abrir a tela
 });
 
 // 2. Carrega as bibliotecas reais do usuário no <select> do Modal
@@ -54,13 +94,43 @@ async function carregarBibliotecasNoSelect() {
   }
 }
 
+// A Open Trivia DB aceita 1 requisição a cada 5 segundos por IP (acima disso, response_code 5).
+const INTERVALO_API_MS = 5000;
+let buscandoAPI = false;
+let timerEspera = null;
+
+// Mantém o botão desabilitado durante a requisição e durante a espera de 5 segundos
+function bloquearBotaoBusca(ate) {
+  const btn = document.getElementById("btnBuscarAPI");
+  clearInterval(timerEspera);
+
+  const atualizar = () => {
+    const restante = Math.ceil((ate - Date.now()) / 1000);
+    if (restante <= 0) {
+      clearInterval(timerEspera);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-search me-1"></i> Buscar Questões';
+      return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = `<i class="bi bi-hourglass-split me-1"></i> Aguarde ${restante}s`;
+  };
+  atualizar();
+  timerEspera = setInterval(atualizar, 250);
+}
+
 // 3. Busca Real na Open Trivia DB via fetch (sem chave de API)
 window.buscarQuestoesAPI = async function (e) {
   if (e) e.preventDefault();
+  if (buscandoAPI) return; // nunca dispara duas requisições ao mesmo tempo
+  buscandoAPI = true;
 
-  const selectCategoria = document.getElementById("filtroTecnologia");
-  const categoria = selectCategoria.value;
-  const nomeCategoria = selectCategoria.selectedOptions[0].text;
+  const btn = document.getElementById("btnBuscarAPI");
+  btn.disabled = true;
+  btn.innerHTML =
+    '<span class="spinner-border spinner-border-sm me-1"></span> Buscando...';
+
+  const categoria = document.getElementById("filtroCategoria").value;
   const dificuldade = document.getElementById("filtroDificuldade").value;
   const spinner = document.getElementById("apiLoadingSpinner");
   const grid = document.getElementById("gridResultadosAPI");
@@ -71,27 +141,32 @@ window.buscarQuestoesAPI = async function (e) {
   // encode=url3986 evita entidades HTML (&quot; etc.) nos textos retornados
   const params = new URLSearchParams({
     amount: "6",
-    category: categoria,
     difficulty: dificuldade.toLowerCase(),
     type: "multiple",
     encode: "url3986",
   });
+  // Categoria vazia = todas as categorias (parâmetro omitido)
+  if (categoria) params.set("category", categoria);
   const url = `https://opentdb.com/api.php?${params}`;
 
   try {
     const resposta = await fetch(url);
-    if (!resposta.ok) {
-      throw new Error(`Erro na Open Trivia DB (Status ${resposta.status}).`);
-    }
+    const { response_code, results } = await resposta.json().catch(() => ({}));
 
-    const { response_code, results } = await resposta.json();
-
-    if (response_code === 5) {
+    // 1. Trata o limite de 5 segundos (vem com HTTP 429 e response_code 5)
+    if (resposta.status === 429 || response_code === 5) {
       throw new Error(
         "Muitas requisições. Aguarde 5 segundos e tente novamente.",
       );
     }
-    if (response_code !== 0 || !results.length) {
+
+    // 2. Trata qualquer outro erro de servidor/HTTP
+    if (!resposta.ok) {
+      throw new Error(`Erro na Open Trivia DB (Status ${resposta.status}).`);
+    }
+
+    // 3. Trata os códigos lógicos da API (que vêm com HTTP 200 OK)
+    if (response_code !== 0 || !results || !results.length) {
       throw new Error("Nenhuma questão encontrada para esse filtro.");
     }
 
@@ -99,17 +174,19 @@ window.buscarQuestoesAPI = async function (e) {
     questoesAtuaisAPI = results.map((q) => ({
       pergunta: decodeURIComponent(q.question),
       resposta: decodeURIComponent(q.correct_answer),
-      tag: nomeCategoria,
+      tag: decodeURIComponent(q.category),
       dif: q.difficulty.charAt(0).toUpperCase() + q.difficulty.slice(1),
     }));
 
     renderizarCardsAPI(questoesAtuaisAPI);
   } catch (erro) {
     console.error("Erro no fetch:", erro);
-    grid.innerHTML = `<div class="col-12"><div class="alert alert-danger">Falha ao buscar questões: ${erro.message}</div></div>`;
+    grid.innerHTML = `<div class="col-12"><div class="alert alert-danger">Falha ao buscar questões: ${escaparHTML(erro.message)}</div></div>`;
   } finally {
     spinner.classList.add("d-none");
     grid.classList.remove("d-none");
+    buscandoAPI = false;
+    bloquearBotaoBusca(Date.now() + INTERVALO_API_MS);
   }
 };
 
@@ -197,7 +274,10 @@ window.confirmarImportacaoCard = async function () {
       );
       const duplicado = existentes.docs.some((d) => {
         const c = d.data();
-        return c.biblioteca_id === bibliotecaId && c.frente === cardSelecionadoParaImportar.pergunta;
+        return (
+          c.biblioteca_id === bibliotecaId &&
+          c.frente === cardSelecionadoParaImportar.pergunta
+        );
       });
       if (duplicado) {
         mostrarToast("Esse flashcard já existe nessa biblioteca.", "danger");
@@ -209,6 +289,7 @@ window.confirmarImportacaoCard = async function () {
     if (bibliotecaId === "CRIAR_GERAL") {
       const novaBib = await addDoc(collection(db, "bibliotecas"), {
         usuario_id: usuarioAtual.uid,
+        usuario_email: usuarioAtual.email,
         nome: "Geral",
         descricao: "Biblioteca padrão",
         criado_em: new Date().toISOString(),
@@ -221,6 +302,7 @@ window.confirmarImportacaoCard = async function () {
     await addDoc(collection(db, "flashcards"), {
       biblioteca_id: bibliotecaId,
       usuario_id: usuarioAtual.uid,
+      usuario_email: usuarioAtual.email,
       frente: cardSelecionadoParaImportar.pergunta,
       verso: cardSelecionadoParaImportar.resposta,
       dificuldade: cardSelecionadoParaImportar.dif.toLowerCase(),
@@ -245,10 +327,3 @@ window.confirmarImportacaoCard = async function () {
     mostrarToast("Erro ao salvar no banco de dados.", "danger");
   }
 };
-
-// Protege o HTML caso a pergunta tenha tags como <div> ou <script>
-function escaparHTML(texto) {
-  const div = document.createElement("div");
-  div.textContent = texto;
-  return div.innerHTML;
-}

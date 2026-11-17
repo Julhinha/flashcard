@@ -1,5 +1,6 @@
 // CRUD de Bibliotecas e Flashcards no Cloud Firestore
 import { auth, db } from "../../js/firebase-config.js";
+import { escaparHTML } from "../../js/utils.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {
   collection,
@@ -24,12 +25,6 @@ const COR_NIVEL = {
   bom: "bg-info-subtle text-info",
   dificil: "bg-danger-subtle text-danger",
 };
-
-function escaparHTML(texto) {
-  const div = document.createElement("div");
-  div.textContent = texto ?? "";
-  return div.innerHTML;
-}
 
 // Modal de confirmação (substitui o confirm() do navegador). Resolve true ao confirmar.
 function confirmarExclusao(titulo, texto) {
@@ -214,6 +209,7 @@ window.salvarBiblioteca = async function (e) {
     } else {
       const ref = await addDoc(collection(db, "bibliotecas"), {
         usuario_id: usuarioAtual.uid,
+        usuario_email: usuarioAtual.email,
         nome,
         descricao,
         criado_em: new Date().toISOString(),
@@ -302,6 +298,7 @@ window.salvarFlashcard = async function (e) {
       await addDoc(collection(db, "flashcards"), {
         biblioteca_id: lib.id,
         usuario_id: usuarioAtual.uid,
+        usuario_email: usuarioAtual.email,
         frente,
         verso,
         dificuldade,

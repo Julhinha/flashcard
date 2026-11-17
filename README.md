@@ -1,10 +1,10 @@
-# TI Flashcards 
+# IFlashcard 
 
-Aplicação web responsiva voltada para estudantes e profissionais de Tecnologia da Informação, inspirada no método Anki de repetição espaçada e alinhada à identidade visual do **Instituto Federal do Rio de Janeiro (IFRJ)**.
+Aplicação web responsiva voltada para estudantes de qualquer área, inspirada no método Anki de repetição espaçada e alinhada à identidade visual do **Instituto Federal do Rio de Janeiro (IFRJ)**.
 
 ## Decisão Arquitetural: Confiabilidade sem IA Generativa
 
-Por regra de precisão, o sistema **não utiliza Inteligência Artificial** para gerar perguntas ou respostas. Todo o conteúdo técnico provém de bases revisadas (**Open Trivia DB**) ou da autoria do estudante, eliminando riscos de alucinações ou sintaxes incorretas.
+Por regra de precisão, o sistema **não utiliza Inteligência Artificial** para gerar perguntas ou respostas. Todo o conteúdo provém de bases revisadas (**Open Trivia DB**) ou da autoria do estudante, eliminando riscos de alucinações ou sintaxes incorretas.
 
 ## Tecnologias Utilizadas
 
@@ -19,15 +19,19 @@ Por regra de precisão, o sistema **não utiliza Inteligência Artificial** para
 Cada tela, dentro de `app/`, possui sua própria pasta com HTML, CSS e JS. Os estilos e scripts compartilhados ficam em `css/` e `js/`.
 
 ```text
-flashcards-ti/
+iflashcard/
 ├── index.html              # Redireciona para app/login/login.html
 ├── css/
 │   ├── global.css          # Tema IFRJ: variáveis de cor do Bootstrap + poucos ajustes
 │   └── flashcard.css       # Efeito 3D do flashcard (Explorar e Revisão)
 ├── js/
-│   ├── app-ui.js           # Toasts e envio de e-mail (EmailJS)
-│   ├── auth-guard.js       # Protege as telas, preenche o menu, sino e lembrete diário
+│   ├── app-ui.js           # Toasts e envio manual de e-mail (EmailJS)
+│   ├── auth-guard.js       # Protege as telas, preenche o menu e o sino de pendências
+│   ├── layout.js           # Navbar e rodapé compartilhados pelas telas internas
+│   ├── utils.js            # Funções utilitárias (ex.: escaparHTML)
 │   └── firebase-config.js
+├── scripts/
+│   └── notificacao-diaria.js  # Lembrete diário automático (rodado pelo GitHub Actions)
 ├── app/
 │   ├── login/          (login.html, login.css, login.js)
 │   ├── dashboard/      (dashboard.html, dashboard.css, dashboard.js)

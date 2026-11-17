@@ -1,0 +1,70 @@
+name: Publicar no GitHub Pages
+
+# Substitui os placeholders __EMAILJS_*__ de js/app-ui.js pelos secrets do repositório
+# e publica só os arquivos do site (sem scripts/ e .github/).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Montar o site
+        env:
+          EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
+          EMAILJS_TEMPLATE_ID: ${{ secrets.EMAILJS_TEMPLATE_ID }}
+          EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+        run: |
+          VARS="EMAILJS_SERVICE_ID EMAILJS_TEMPLATE_ID EMAILJS_PUBLIC_KEY FIREBASE_API_KEY FIREBASE_AUTH_DOMAIN FIREBASE_PROJECT_ID FIREBASE_STORAGE_BUCKET FIREBASE_MESSAGING_SENDER_ID FIREBASE_APP_ID"
+          for v in $VARS; do
+            if [ -z "${!v}" ]; then
+              echo "::error::Secret $v não definido (Settings > Secrets and variables > Actions)."
+              exit 1
+            fi
+          done
+
+          mkdir _site
+          cp -r index.html app css js _site/
+          # As telas carregam ../../env.local.js (só existe na máquina local); em produção fica vazio
+          echo "// vazio em produção: valores injetados nos arquivos js/" > _site/env.local.js
+
+          # Troca cada placeholder __NOME__ pelo valor do secret de mesmo nome
+          for v in $VARS; do
+            sed -i "s|__${v}__|${!v}|g" _site/js/app-ui.js _site/js/firebase-config.js
+          done
+
+          if grep -rqE "__(EMAILJS|FIREBASE)_[A-Z_]+__" _site; then
+            echo "::error::Ainda há placeholders no site."
+            exit 1
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
