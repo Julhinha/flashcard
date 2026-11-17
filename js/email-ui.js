@@ -50,7 +50,6 @@ function exibirUltimoEnvio(iso) {
     ? `Último envio: ${new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}`
     : "Nenhum envio realizado ainda";
 }
-
 // Envio manual (botões do dashboard e do sino). O lembrete diário automático é feito
 // pelo workflow do GitHub Actions, não por esta função.
 async function dispararEmailLembrete() {
@@ -62,8 +61,15 @@ async function dispararEmailLembrete() {
     return;
   }
 
-  mostrarToast("Enviando lembrete de revisão via EmailJS...", "primary");
+  mostrarToast("Enviando lembrete via EmailJS...", "primary");
   try {
+    // Mesmo conteúdo do job diário (js/email-template.js): com cards pendentes envia a
+    // revisão; sem cards, o aviso de inatividade.
+    const pendentes = window.cardsPendentes ?? 0;
+    const decisao =
+      pendentes > 0
+        ? { tipo: "revisao_pendente" }
+        : { tipo: "inatividade", diasInativo: window.diasInativo ?? 0 };
     const resposta = await fetch(
       "https://api.emailjs.com/api/v1.0/email/send",
       {
@@ -73,22 +79,12 @@ async function dispararEmailLembrete() {
           service_id: EMAILJS_CONFIG.serviceId,
           template_id: EMAILJS_CONFIG.templateId,
           user_id: EMAILJS_CONFIG.publicKey,
-          template_params: {
-            to_email: window.usuarioEmail,
-            to_name: window.usuarioNome || window.usuarioEmail.split("@")[0],
-            cards_pendentes: window.cardsPendentes ?? 0,
-            link_revisao: new URL("../revisao/revisao.html", location.href)
-              .href,
-            tipo: "revisao_pendente",
-            dias_inativo: 0,
-            assunto: `IFlashcard: você tem ${window.cardsPendentes ?? 0} card(s) para revisar!`,
-            mensagem:
-              "Sua fila de repetição espaçada (Anki) está aguardando por você.",
-            destaque: `${window.cardsPendentes ?? 0} flashcard(s) pendente(s) para revisão hoje!`,
-            botao: "Revisar Meus Cards Agora",
-            cor_destaque:
-              (window.cardsPendentes ?? 0) > 0 ? "#dc3545" : "#0d6efd",
-          },
+          template_params: EmailTemplate.montarParametrosdeEmail({
+            email: window.usuarioEmail,
+            nome: window.usuarioNome || window.usuarioEmail.split("@")[0],
+            pendentes,
+            decisao,
+          }),
         }),
       },
     );
@@ -97,7 +93,7 @@ async function dispararEmailLembrete() {
     const agora = new Date().toISOString();
     exibirUltimoEnvio(agora);
     mostrarToast(
-      `E-mail de revisão enviado com sucesso para ${window.usuarioEmail}!`,
+      `E-mail enviado com sucesso para ${window.usuarioEmail}!`,
       "success",
     );
     if (window.salvarPerfil) {

@@ -99,6 +99,14 @@ onAuthStateChanged(auth, async (user) => {
     carregarPerfil(user.uid),
   ]);
 
+  // Dias desde o acesso anterior (mesmo cálculo do job), usado no e-mail de inatividade
+  const ultimoAcesso = perfil.ultimo_acesso_em
+    ? new Date(perfil.ultimo_acesso_em).getTime()
+    : NaN;
+  window.diasInativo = Number.isNaN(ultimoAcesso)
+    ? 0
+    : Math.floor((Date.now() - ultimoAcesso) / (24 * UMA_HORA_MS));
+
   const interruptor = document.getElementById("switchEmailNotif");
   if (interruptor) interruptor.checked = perfil.notificacoes_email === true;
   if (typeof window.exibirUltimoEnvio === "function") {

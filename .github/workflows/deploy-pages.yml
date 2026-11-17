@@ -1,6 +1,6 @@
 name: Publicar no GitHub Pages
 
-# Substitui os placeholders __EMAILJS_*__ de js/app-ui.js pelos secrets do repositório
+# Substitui os placeholders __EMAILJS_*__ de js/email-ui.js pelos secrets do repositório
 # e publica só os arquivos do site (sem scripts/ e .github/).
 on:
   push:
@@ -52,7 +52,7 @@ jobs:
 
           # Troca cada placeholder __NOME__ pelo valor do secret de mesmo nome
           for v in $VARS; do
-            sed -i "s|__${v}__|${!v}|g" _site/js/app-ui.js _site/js/firebase-config.js
+            sed -i "s|__${v}__|${!v}|g" _site/js/email-ui.js _site/js/firebase-config.js
           done
 
           if grep -rqE "__(EMAILJS|FIREBASE)_[A-Z_]+__" _site; then

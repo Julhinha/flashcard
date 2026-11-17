@@ -19,11 +19,15 @@
 //   FIREBASE_SERVICE_ACCOUNT  (obrigatória) JSON completo da conta de serviço
 //   EMAILJS_PRIVATE_KEY       (obrigatória, exceto em DRY_RUN) Private Key do EmailJS
 //   EMAILJS_SERVICE_ID / EMAILJS_TEMPLATE_ID / EMAILJS_PUBLIC_KEY  (obrigatórias, exceto em DRY_RUN)
-//   SITE_URL                  (opcional) padrão: GitHub Pages do repositório
 //   DRY_RUN=1                 (opcional) só lista o que seria enviado
 
 "use strict";
 const crypto = require("node:crypto");
+// Textos e template_params compartilhados com o botão manual do site
+const {
+  montarMensagemdeEmail,
+  montarParametrosdeEmail,
+} = require("../js/email-template.js");
 
 const HORA_MS = 60 * 60 * 1000;
 const DIA_MS = 24 * HORA_MS;
@@ -89,32 +93,6 @@ function decidirEnvio({ pendentes, ultimoAcessoIso, ultimoEnvioIso, agoraMs }) {
     };
   }
   return { enviar: true, tipo: "inatividade", diasInativo };
-}
-
-// Textos prontos: um único template do EmailJS serve para os dois tipos de e-mail.
-function montarMensagem(decisao, pendentes) {
-  if (decisao.tipo === "inatividade") {
-    return {
-      assunto: "IFlashcard: sentimos sua falta!",
-      mensagem: "Sentimos sua falta! Retome seus estudos de onde parou.",
-      destaque: `Faz ${decisao.diasInativo} dias que você não acessa o IFlashcard.`,
-      botao: "Voltar a Estudar",
-      cor_destaque: "#0d6efd",
-    };
-  }
-  return {
-    assunto: `IFlashcard: você tem ${pendentes} card(s) para revisar!`,
-    mensagem: "Sua fila de repetição espaçada (Anki) está aguardando por você.",
-    destaque: `${pendentes} flashcard(s) pendente(s) para revisão hoje!`,
-    botao: "Revisar Meus Cards Agora",
-    cor_destaque: "#dc3545",
-  };
-}
-
-function urlDoSite() {
-  if (process.env.SITE_URL) return process.env.SITE_URL.replace(/\/$/, "");
-  const [dono, repo] = (process.env.GITHUB_REPOSITORY || "").split("/");
-  return dono && repo ? `https://${dono.toLowerCase()}.github.io/${repo}` : "";
 }
 
 // ---------------------------------------------------------------
@@ -224,14 +202,7 @@ async function gravarUltimoEnvio(ctx, uid, iso) {
 // ---------------------------------------------------------------
 // EmailJS
 // ---------------------------------------------------------------
-async function enviarEmail({
-  email,
-  nome,
-  pendentes,
-  linkRevisao,
-  decisao,
-  textos,
-}) {
+async function enviarEmail({ email, nome, pendentes, decisao }) {
   const resposta = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -240,15 +211,12 @@ async function enviarEmail({
       template_id: EMAILJS.templateId,
       user_id: EMAILJS.publicKey,
       accessToken: EMAILJS.privateKey, // exigido em chamadas fora do navegador
-      template_params: {
-        to_email: email,
-        to_name: nome,
-        cards_pendentes: pendentes,
-        link_revisao: linkRevisao,
-        tipo: decisao.tipo,
-        dias_inativo: decisao.diasInativo ?? 0,
-        ...textos,
-      },
+      template_params: montarParametrosdeEmail({
+        email,
+        nome,
+        pendentes,
+        decisao,
+      }),
     }),
   });
   if (!resposta.ok)
@@ -293,7 +261,6 @@ async function main() {
     base: `https://firestore.googleapis.com/v1/projects/${conta.project_id}/databases/(default)/documents`,
     token: await obterToken(conta),
   };
-  const linkRevisao = `${urlDoSite()}/app/revisao/revisao.html`;
   const agora = new Date();
 
   // Regra 1: só quem ativou as notificações diárias
@@ -338,7 +305,6 @@ async function main() {
         continue;
       }
 
-      const textos = montarMensagem(decisao, pendentes);
       if (dryRun) {
         console.log(
           `- ${uid}: enviaria "${decisao.tipo}" para ${perfil.email} (${pendentes} pendente(s)).`,
@@ -350,9 +316,7 @@ async function main() {
         email: perfil.email,
         nome: perfil.nome || perfil.email.split("@")[0],
         pendentes,
-        linkRevisao,
         decisao,
-        textos,
       });
       await gravarUltimoEnvio(ctx, uid, new Date().toISOString());
       enviados++;
@@ -373,7 +337,7 @@ async function main() {
 module.exports = {
   contarPendentes,
   decidirEnvio,
-  montarMensagem,
+  montarMensagemdeEmail,
   criarJwt,
   montarConsulta,
   lerCampos,

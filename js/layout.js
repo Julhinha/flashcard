@@ -10,11 +10,36 @@
   const pagina = script.dataset.pagina;
 
   const LINKS = [
-    { id: "dashboard", href: "../dashboard/dashboard.html", icone: "bi-speedometer2", texto: "Dashboard" },
-    { id: "explorar", href: "../explorar/explorar.html", icone: "bi-compass", texto: "Explorar API" },
-    { id: "bibliotecas", href: "../bibliotecas/bibliotecas.html", icone: "bi-collection", texto: "Minhas Bibliotecas" },
-    { id: "revisao", href: "../revisao/revisao.html", icone: "bi-lightning-charge", texto: "Revisão Anki" },
-    { id: "sobre", href: "../sobre/sobre.html", icone: "bi-info-circle", texto: "Sobre & Arquitetura" },
+    {
+      id: "dashboard",
+      href: "../dashboard/dashboard.html",
+      icone: "bi-speedometer2",
+      texto: "Dashboard",
+    },
+    {
+      id: "explorar",
+      href: "../explorar/explorar.html",
+      icone: "bi-compass",
+      texto: "Explorar API",
+    },
+    {
+      id: "bibliotecas",
+      href: "../bibliotecas/bibliotecas.html",
+      icone: "bi-collection",
+      texto: "Minhas Bibliotecas",
+    },
+    {
+      id: "revisao",
+      href: "../revisao/revisao.html",
+      icone: "bi-lightning-charge",
+      texto: "Revisão",
+    },
+    {
+      id: "sobre",
+      href: "../sobre/sobre.html",
+      icone: "bi-info-circle",
+      texto: "Sobre & Arquitetura",
+    },
   ];
 
   function navbar() {
@@ -40,7 +65,7 @@
             <rect x="13" y="20" width="10" height="2" rx="1" fill="#FFFFFF" />
             <rect x="13" y="25" width="6" height="2" rx="1" fill="#FFFFFF" opacity="0.85" />
           </svg>
-          <span class="fw-bold fs-5 text-primary">IF<span class="text-dark">lashcard</span></span>
+          <span class="fw-bold fs-5 text-dark" style="letter-spacing:-0.4px;line-height:1;"><svg viewBox="0 0 32 43" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="IF" style="height:0.75em;width:auto;vertical-align:baseline;margin-right:0.06em;"><circle cx="5" cy="5" r="4.5" fill="#CD191E" /><rect x="12" y="0.5" width="9" height="9" rx="1.5" fill="#2F9E41" /><rect x="23" y="0.5" width="9" height="9" rx="1.5" fill="#2F9E41" /><rect x="0.5" y="11.5" width="9" height="9" rx="1.5" fill="#2F9E41" /><rect x="12" y="11.5" width="9" height="9" rx="1.5" fill="#2F9E41" /><rect x="0.5" y="22.5" width="9" height="9" rx="1.5" fill="#2F9E41" /><rect x="12" y="22.5" width="9" height="9" rx="1.5" fill="#2F9E41" /><rect x="23" y="22.5" width="9" height="9" rx="1.5" fill="#2F9E41" /><rect x="0.5" y="33.5" width="9" height="9" rx="1.5" fill="#2F9E41" /><rect x="12" y="33.5" width="9" height="9" rx="1.5" fill="#2F9E41" /></svg>lashcard</span>
           <span class="badge bg-primary-subtle text-primary-emphasis border border-success-subtle ms-1 fs-xs d-none d-sm-inline-block">IFRJ</span>
         </a>
 
@@ -61,7 +86,7 @@
               </button>
               <div class="dropdown-menu dropdown-menu-start dropdown-menu-xl-end dropdown-notificacoes shadow-sm p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="fw-bold small">Revisões Pendentes Hoje</span>
+                  <span class="fw-bold small">Revisões Pendentes</span>
                   <span class="badge bg-danger-subtle text-danger" id="dropdownPendCount">0 cards</span>
                 </div>
                 <p class="small text-muted mb-3">Você possui flashcards vencidos aguardando revisão espaçada.</p>
@@ -110,6 +135,11 @@
     </footer>`;
   }
 
-  const html = componente === "navbar" ? navbar() : componente === "rodape" ? rodape() : "";
+  const html =
+    componente === "navbar"
+      ? navbar()
+      : componente === "rodape"
+        ? rodape()
+        : "";
   script.insertAdjacentHTML("beforebegin", html);
 })();

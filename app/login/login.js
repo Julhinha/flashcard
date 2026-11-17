@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
+  sendPasswordResetEmail,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 const DASHBOARD_URL = "../dashboard/dashboard.html";
@@ -27,12 +28,50 @@ const MENSAGENS_ERRO = {
   "auth/network-request-failed": "Falha de conexão. Verifique sua internet.",
 };
 
-function mostrarErro(err) {
+// Aviso de sucesso some sozinho; qualquer outra mensagem cancela esse temporizador
+const TEMPO_AVISO_SUCESSO_MS = 8000;
+let timerAviso = null;
+
+function mostrarAviso(texto) {
+  clearTimeout(timerAviso);
   alertBox.className = "alert alert-danger small py-2";
-  alertBox.textContent = MENSAGENS_ERRO[err.code] || "Não foi possível autenticar. Tente novamente.";
+  alertBox.textContent = texto;
+}
+
+function mostrarErro(err) {
+  mostrarAviso(MENSAGENS_ERRO[err.code] || "Não foi possível autenticar. Tente novamente.");
+}
+
+// Validação feita aqui (os formulários usam "novalidate"), para as mensagens
+// ficarem sempre em português e no mesmo estilo, em vez do balão do navegador.
+const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+// Retorna true se o e-mail é válido; senão mostra o aviso, foca o campo e retorna false
+function validarEmail(campo) {
+  const email = campo.value.trim();
+  if (!email) {
+    mostrarAviso("Informe seu e-mail.");
+  } else if (!EMAIL_VALIDO.test(email)) {
+    mostrarAviso("E-mail inválido. Use o formato nome@dominio.com.");
+  } else {
+    return true;
+  }
+  campo.focus();
+  return false;
+}
+
+function mostrarSucesso(texto) {
+  clearTimeout(timerAviso);
+  alertBox.className = "alert alert-success small py-2";
+  alertBox.textContent = texto;
+  timerAviso = setTimeout(
+    () => alertBox.classList.add("d-none"),
+    TEMPO_AVISO_SUCESSO_MS,
+  );
 }
 
 function mostrarCarregando(texto) {
+  clearTimeout(timerAviso);
   alertBox.className = "alert alert-success small py-2";
   alertBox.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${texto}`;
 }
@@ -62,8 +101,16 @@ document.getElementById("btnGoogle").addEventListener("click", async () => {
 document.getElementById("formLogin").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = document.getElementById("btnSubmitLogin");
-  const email = document.getElementById("loginEmail").value.trim();
-  const senha = document.getElementById("loginSenha").value;
+  const campoEmail = document.getElementById("loginEmail");
+  const campoSenha = document.getElementById("loginSenha");
+  if (!validarEmail(campoEmail)) return;
+  if (!campoSenha.value) {
+    mostrarAviso("Informe sua senha.");
+    campoSenha.focus();
+    return;
+  }
+  const email = campoEmail.value.trim();
+  const senha = campoSenha.value;
   alertBox.classList.add("d-none");
   setBotaoCarregando(btn, true);
   try {
@@ -74,12 +121,50 @@ document.getElementById("formLogin").addEventListener("submit", async (e) => {
   }
 });
 
+// Recuperação de senha: envia o link de redefinição para o e-mail digitado no login
+document.getElementById("btnEsqueciSenha").addEventListener("click", async (e) => {
+  const btn = e.currentTarget;
+  const campoEmail = document.getElementById("loginEmail");
+  if (!validarEmail(campoEmail)) return;
+  const email = campoEmail.value.trim();
+
+  btn.disabled = true;
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (err) {
+    // E-mail sem conta: resposta genérica, para não revelar quais e-mails estão cadastrados
+    if (err.code !== "auth/user-not-found") {
+      mostrarErro(err);
+      btn.disabled = false;
+      return;
+    }
+  }
+  mostrarSucesso(
+    "Se houver uma conta com esse e-mail, enviamos um link para redefinir a senha. Verifique também a caixa de spam.",
+  );
+  btn.disabled = false;
+});
+
 document.getElementById("formCadastro").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = document.getElementById("btnSubmitCadastro");
-  const nome = document.getElementById("cadastroNome").value.trim();
-  const email = document.getElementById("cadastroEmail").value.trim();
-  const senha = document.getElementById("cadastroSenha").value;
+  const campoNome = document.getElementById("cadastroNome");
+  const campoEmail = document.getElementById("cadastroEmail");
+  const campoSenha = document.getElementById("cadastroSenha");
+  const nome = campoNome.value.trim();
+  if (!nome) {
+    mostrarAviso("Informe seu nome completo.");
+    campoNome.focus();
+    return;
+  }
+  if (!validarEmail(campoEmail)) return;
+  if (campoSenha.value.length < 6) {
+    mostrarAviso("A senha deve ter no mínimo 6 caracteres.");
+    campoSenha.focus();
+    return;
+  }
+  const email = campoEmail.value.trim();
+  const senha = campoSenha.value;
   alertBox.classList.add("d-none");
   setBotaoCarregando(btn, true);
   cadastrando = true;
