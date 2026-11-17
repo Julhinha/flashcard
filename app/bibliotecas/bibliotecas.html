@@ -26,7 +26,11 @@
     <link rel="stylesheet" href="bibliotecas.css" />
   </head>
   <body class="d-flex flex-column min-vh-100">
-    <script src="../../js/layout.js" data-componente="navbar" data-pagina="bibliotecas"></script>
+    <script
+      src="../../js/layout.js"
+      data-componente="navbar"
+      data-pagina="bibliotecas"
+    ></script>
 
     <!-- Toast Container para Feedbacks   -->
     <div
@@ -131,6 +135,7 @@
             <div class="d-flex flex-column gap-3" id="listaCardsBiblioteca">
               <!-- Renderizado via bibliotecas.js -->
             </div>
+            <nav id="paginacaoCards" aria-label="Paginação dos flashcards"></nav>
           </div>
         </div>
       </div>
@@ -163,7 +168,7 @@
                 type="text"
                 class="form-control"
                 id="inputBibliotecaNome"
-                placeholder="Ex: Estruturas de Dados em C"
+                placeholder="Ex: Web II"
                 required
               />
             </div>
@@ -212,6 +217,10 @@
           </div>
           <div class="modal-body">
             <input type="hidden" id="editCardId" />
+            <div class="mb-3" id="grupoCardBiblioteca">
+              <label class="form-label small fw-semibold">Biblioteca</label>
+              <div id="dropdownCardBiblioteca"></div>
+            </div>
             <div class="mb-3">
               <label class="form-label small fw-semibold"
                 >Frente (Pergunta ou Conceito)</label
@@ -224,7 +233,7 @@
                 required
               ></textarea>
             </div>
-            <div class="mb-3">
+            <div class="mb-0">
               <label class="form-label small fw-semibold"
                 >Verso (Resposta)</label
               >
@@ -235,16 +244,6 @@
                 placeholder="Digite a resposta..."
                 required
               ></textarea>
-            </div>
-            <div class="mb-0">
-              <label class="form-label small fw-semibold"
-                >Dificuldade Inicial</label
-              >
-              <select class="form-select" id="inputCardDificuldade">
-                <option value="easy">Fácil (Easy)</option>
-                <option value="medium">Médio (Medium)</option>
-                <option value="hard">Difícil (Hard)</option>
-              </select>
             </div>
           </div>
           <div class="modal-footer">

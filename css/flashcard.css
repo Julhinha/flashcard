@@ -29,3 +29,39 @@
   border-color: rgba(var(--bs-primary-rgb), 0.35);
   background: linear-gradient(180deg, #FFFFFF 0%, #F9FDF9 100%);
 }
+
+/* Mobile: o flip 3D (perspective/preserve-3d) é rasterizado em baixa resolução e deixa
+   o texto pixelado. Em telas pequenas a troca frente/verso é um fade, sem transform 3D. */
+@media (max-width: 767.98px) {
+  .flashcard-perspective {
+    perspective: none;
+  }
+
+  .flashcard-inner {
+    transform-style: flat;
+    transition: none;
+  }
+
+  .flashcard-inner.is-flipped {
+    transform: none;
+  }
+
+  .flashcard-face {
+    -webkit-backface-visibility: visible;
+    backface-visibility: visible;
+    transition: opacity 0.25s ease;
+  }
+
+  .flashcard-back {
+    transform: none;
+    opacity: 0;
+  }
+
+  .flashcard-inner.is-flipped .flashcard-face:not(.flashcard-back) {
+    opacity: 0;
+  }
+
+  .flashcard-inner.is-flipped .flashcard-back {
+    opacity: 1;
+  }
+}

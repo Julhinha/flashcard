@@ -6,3 +6,8 @@ export function escaparHTML(texto) {
   div.textContent = texto ?? "";
   return div.innerHTML;
 }
+
+// Normaliza um texto para comparação (ignora maiúsculas e espaços extras)
+export function normalizarTexto(texto) {
+  return (texto ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+}

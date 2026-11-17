@@ -130,7 +130,6 @@
           <strong class="text-dark">IFlashcard</strong> — Projeto Web Acadêmico •
           <span class="text-primary fw-semibold">IFRJ</span>
         </div>
-        <div>Arquitetura v3.0 • Sem IA Generativa • Dados via Open Trivia DB &amp; Firebase</div>
       </div>
     </footer>`;
   }

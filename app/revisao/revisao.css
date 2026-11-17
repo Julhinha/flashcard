@@ -7,6 +7,22 @@
   height: 390px;
 }
 
+/* Filtro de baralho no topo: linha própria (largura total) no mobile,
+   no centro da barra a partir de md */
+.revisao-filtro {
+  order: 3;
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .revisao-filtro {
+    order: 0;
+    flex: 0 1 auto;
+    min-width: 240px;
+  }
+}
+
 /* Barra de progresso fina no topo */
 .progress-thin {
   --bs-progress-height: 5px;

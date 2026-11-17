@@ -62,15 +62,16 @@ iflashcard/
 ├── index.html                  # Redireciona para app/login/login.html
 ├── env.local.js                # Credenciais locais (NÃO versionado; ver "Configuração do ambiente")
 ├── css/
-│   ├── global.css              # Tema IFRJ: variáveis de cor do Bootstrap e poucos ajustes
+│   ├── global.css              # Tema IFRJ: cores do Bootstrap e estilos comuns (botões, navbar, cards, sino)
 │   └── flashcard.css           # Efeito 3D do flashcard (Explorar e Revisão)
 ├── js/
 │   ├── firebase-config.js      # Inicializa o Firebase (Auth e Firestore)
 │   ├── auth-guard.js           # Protege as telas, preenche o menu e o sino de pendências
 │   ├── layout.js               # Navbar e rodapé compartilhados pelas telas internas
+│   ├── dropdown-busca.js       # Dropdown com campo de busca (filtros de Explorar, Bibliotecas e Revisão)
 │   ├── email-ui.js             # Toasts, configuração do EmailJS e envio manual de e-mail
 │   ├── email-template.js       # Textos e parâmetros do e-mail (usado pelo site e pelo job diário)
-│   └── utils.js                # Funções utilitárias (ex.: escaparHTML)
+│   └── utils.js                # Funções utilitárias (escaparHTML e normalizarTexto)
 ├── scripts/
 │   └── notificacao-diaria.js   # Lembrete diário automático (rodado pelo GitHub Actions)
 ├── .github/workflows/
@@ -83,6 +84,7 @@ iflashcard/
 │   ├── bibliotecas/            (bibliotecas.html, bibliotecas.css, bibliotecas.js)
 │   ├── revisao/                (revisao.html, revisao.css, revisao.js)
 │   └── sobre/                  (sobre.html, sobre.css, sobre.js)
+├── .gitignore                  # Ignora env.local.js, serviceAccount*.json e outros arquivos de credenciais
 └── README.md
 ```
 

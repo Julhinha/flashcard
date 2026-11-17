@@ -1,5 +1,6 @@
 // Sessão de Revisão Espaçada (RN04: Difícil +10m, Bom +3d, Fácil +7d) com Cloud Firestore
 import { auth, db } from "../../js/firebase-config.js";
+import { criarDropdownBusca } from "../../js/dropdown-busca.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import {
   collection,
@@ -19,6 +20,17 @@ const INTERVALO_MS = {
 };
 
 const bibliotecaParam = new URLSearchParams(location.search).get("biblioteca");
+
+// Filtro de baralho (dropdown com busca); onChange recalcula a fila
+const dropdownBaralho = criarDropdownBusca(
+  document.getElementById("filtroBaralhoRevisao"),
+  {
+    pequeno: true,
+    placeholderBusca: "Buscar biblioteca...",
+    textoVazio: "Nenhuma biblioteca encontrada.",
+    onChange: () => window.filtrarFilaRevisao(),
+  },
+);
 
 let nomesBibliotecas = {}; // id -> nome
 let todosCards = []; // todos os cards do usuário
@@ -132,28 +144,27 @@ function filaDoFiltro(filtro) {
 }
 
 window.filtrarFilaRevisao = function () {
-  const filtro = document.getElementById("filtroBaralhoRevisao").value;
-  filaRevisao = filaDoFiltro(filtro);
+  filaRevisao = filaDoFiltro(dropdownBaralho.valor);
   indiceAtual = 0;
   carregarCardAtual();
 };
 
 function preencherFiltro() {
-  const select = document.getElementById("filtroBaralhoRevisao");
   if (modoBaralho) {
-    select.innerHTML = `<option value="${bibliotecaParam}"></option>`;
-    select.options[0].textContent = nomesBibliotecas[bibliotecaParam];
-    select.disabled = true;
+    dropdownBaralho.setOpcoes([
+      { valor: bibliotecaParam, texto: nomesBibliotecas[bibliotecaParam] },
+    ]);
+    dropdownBaralho.setDesabilitado(true);
     return;
   }
-  select.innerHTML = `<option value="todos">Todos os Baralhos Vencidos</option>`;
   const comPendencia = [...new Set(vencidos.map((c) => c.biblioteca_id))];
-  comPendencia.forEach((id) => {
-    const opt = document.createElement("option");
-    opt.value = id;
-    opt.textContent = nomesBibliotecas[id] || "Sem biblioteca";
-    select.appendChild(opt);
-  });
+  dropdownBaralho.setOpcoes([
+    { valor: "todos", texto: "Todos os Baralhos Vencidos" },
+    ...comPendencia.map((id) => ({
+      valor: id,
+      texto: nomesBibliotecas[id] || "Sem biblioteca",
+    })),
+  ]);
 }
 
 async function carregarFila(uid) {
@@ -174,8 +185,7 @@ async function carregarFila(uid) {
     .sort((a, b) => (a.proxima_revisao || "").localeCompare(b.proxima_revisao || ""));
 
   preencherFiltro();
-  const select = document.getElementById("filtroBaralhoRevisao");
-  filaRevisao = filaDoFiltro(select.value);
+  filaRevisao = filaDoFiltro(dropdownBaralho.valor);
   indiceAtual = 0;
   carregarCardAtual();
 }

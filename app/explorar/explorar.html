@@ -60,68 +60,14 @@
         >
           <div class="col-12 col-md-5">
             <label class="form-label small fw-semibold">Categoria</label>
-            <!-- Dropdown com busca: o valor (id da categoria) fica no input hidden -->
-            <input type="hidden" id="filtroCategoria" value="" />
-            <div class="dropdown">
-              <button
-                type="button"
-                class="form-select text-start"
-                id="btnCategoria"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="outside"
-                aria-expanded="false"
-              >
-                Todas as categorias
-              </button>
-              <div class="dropdown-menu w-100 p-2">
-                <input
-                  type="search"
-                  class="form-control form-control-sm mb-2"
-                  id="buscaCategoria"
-                  placeholder="Buscar categoria..."
-                  autocomplete="off"
-                />
-                <div class="categoria-lista" id="listaCategorias">
-                  <button type="button" class="dropdown-item active" data-valor="">Todas as categorias</button>
-                  <button type="button" class="dropdown-item" data-valor="9">General Knowledge</button>
-                  <button type="button" class="dropdown-item" data-valor="10">Entertainment: Books</button>
-                  <button type="button" class="dropdown-item" data-valor="11">Entertainment: Film</button>
-                  <button type="button" class="dropdown-item" data-valor="12">Entertainment: Music</button>
-                  <button type="button" class="dropdown-item" data-valor="13">Entertainment: Musicals &amp; Theatres</button>
-                  <button type="button" class="dropdown-item" data-valor="14">Entertainment: Television</button>
-                  <button type="button" class="dropdown-item" data-valor="15">Entertainment: Video Games</button>
-                  <button type="button" class="dropdown-item" data-valor="16">Entertainment: Board Games</button>
-                  <button type="button" class="dropdown-item" data-valor="17">Science &amp; Nature</button>
-                  <button type="button" class="dropdown-item" data-valor="18">Science: Computers</button>
-                  <button type="button" class="dropdown-item" data-valor="19">Science: Mathematics</button>
-                  <button type="button" class="dropdown-item" data-valor="20">Mythology</button>
-                  <button type="button" class="dropdown-item" data-valor="21">Sports</button>
-                  <button type="button" class="dropdown-item" data-valor="22">Geography</button>
-                  <button type="button" class="dropdown-item" data-valor="23">History</button>
-                  <button type="button" class="dropdown-item" data-valor="24">Politics</button>
-                  <button type="button" class="dropdown-item" data-valor="25">Art</button>
-                  <button type="button" class="dropdown-item" data-valor="26">Celebrities</button>
-                  <button type="button" class="dropdown-item" data-valor="27">Animals</button>
-                  <button type="button" class="dropdown-item" data-valor="28">Vehicles</button>
-                  <button type="button" class="dropdown-item" data-valor="29">Entertainment: Comics</button>
-                  <button type="button" class="dropdown-item" data-valor="30">Science: Gadgets</button>
-                  <button type="button" class="dropdown-item" data-valor="31">Entertainment: Japanese Anime &amp; Manga</button>
-                  <button type="button" class="dropdown-item" data-valor="32">Entertainment: Cartoon &amp; Animations</button>
-                </div>
-                <div class="small text-muted px-2 py-1 d-none" id="categoriaVazia">Nenhuma categoria encontrada.</div>
-              </div>
-            </div>
+            <div id="dropdownCategoria"></div>
           </div>
 
           <div class="col-12 col-md-4">
             <label class="form-label small fw-semibold"
               >Nível de Dificuldade</label
             >
-            <select class="form-select" id="filtroDificuldade">
-              <option value="Easy">Easy (Fácil)</option>
-              <option value="Medium">Medium (Médio)</option>
-              <option value="Hard">Hard (Difícil)</option>
-            </select>
+            <div id="dropdownDificuldade"></div>
           </div>
 
           <div class="col-12 col-md-3 d-grid">
@@ -165,8 +111,8 @@
         <div class="modal-content border-0 shadow rounded-4">
           <div class="modal-header border-bottom">
             <h5 class="modal-title fw-bold">
-              <i class="bi bi-bookmark-plus text-primary me-2"></i>Salvar na
-              Biblioteca
+              <i class="bi bi-bookmark-plus text-primary me-2"></i
+              ><span id="tituloModalSalvar">Salvar na Biblioteca</span>
             </h5>
             <button
               type="button"
@@ -178,18 +124,13 @@
             <p class="small text-muted mb-2">
               Selecione o baralho de destino no Firestore:
             </p>
-            <select class="form-select mb-3" id="selectBibliotecaDestino">
-              <option value="">Carregando bibliotecas...</option>
-            </select>
+            <div class="mb-3" id="dropdownBibliotecaDestino"></div>
 
-            <div class="bg-light p-3 rounded-3 border small">
-              <div class="fw-bold text-dark mb-1" id="previewModalFrente">
-                Pergunta selecionada...
-              </div>
-              <div class="text-muted" id="previewModalVerso">
-                Resposta...
-              </div>
-            </div>
+            <div
+              class="bg-light p-3 rounded-3 border small"
+              id="previewModalCards"
+              style="max-height: 40vh; overflow-y: auto"
+            ></div>
           </div>
           <div class="modal-footer border-top">
             <button
@@ -202,6 +143,7 @@
             <button
               type="button"
               class="btn btn-primary"
+              id="btnConfirmarImportacao"
               onclick="confirmarImportacaoCard()"
             >
               <i class="bi bi-cloud-check me-1"></i> Confirmar e Salvar
