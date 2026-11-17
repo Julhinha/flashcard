@@ -85,6 +85,42 @@ body {
   --bs-nav-pills-link-active-bg: #EBF7EE;
 }
 
+/* Menu principal: textos sem quebra de linha e fonte compacta */
+.navbar-brand {
+  white-space: nowrap;
+  margin-right: 0.75rem;
+}
+
+.navbar-nav .nav-link {
+  white-space: nowrap;
+}
+
+/* Brand e menu nunca encolhem/quebram; só o espaço livre sobra no fim */
+.navbar-brand,
+.navbar-nav {
+  flex-shrink: 0;
+}
+
+@media (min-width: 1200px) {
+  .navbar {
+    --bs-navbar-nav-link-padding-x: 0.5rem;
+  }
+
+  .navbar-nav.nav-pills {
+    --bs-nav-link-font-size: 0.85rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .navbar {
+    --bs-navbar-nav-link-padding-x: 0.75rem;
+  }
+
+  .navbar-nav.nav-pills {
+    --bs-nav-link-font-size: 0.9rem;
+  }
+}
+
 .nav-pills .nav-link:hover {
   background-color: var(--bs-primary-bg-subtle);
 }

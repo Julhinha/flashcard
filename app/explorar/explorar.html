@@ -28,7 +28,7 @@
   </head>
   <body class="d-flex flex-column min-vh-100">
     <!-- Navbar Institucional IFRJ -->
-    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+    <nav class="navbar navbar-expand-xl bg-white border-bottom sticky-top">
       <div class="container">
         <a
           class="navbar-brand d-flex align-items-center gap-2"
@@ -65,7 +65,7 @@
               opacity="0.85"
             />
           </svg>
-          <span class="fw-bold fs-4 text-primary"
+          <span class="fw-bold fs-5 text-primary"
             >TI<span class="text-dark">Flashcards</span></span
           >
           <span
@@ -84,7 +84,7 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarMain">
-          <ul class="navbar-nav nav-pills me-auto mb-2 mb-lg-0 ms-lg-4 gap-1">
+          <ul class="navbar-nav nav-pills flex-nowrap mb-2 mb-xl-0 ms-xl-2 gap-1">
             <li class="nav-item">
               <a class="nav-link" href="../dashboard/dashboard.html">
                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
@@ -102,7 +102,7 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="../revisao/revisao.html">
-                <i class="bi bi-lightning-charge me-1"></i> Revisão Anki
+                <i class="bi bi-lightning-charge me-1"></i> Revisão
               </a>
             </li>
             <li class="nav-item">
@@ -113,7 +113,7 @@
           </ul>
 
           <!-- Sino de Notificações + Perfil -->
-          <div class="d-flex align-items-center gap-3">
+          <div class="d-flex align-items-center gap-2 ms-xl-3 flex-shrink-0">
             <div class="dropdown">
               <button
                 class="btn btn-light border position-relative rounded-circle p-2"
@@ -126,7 +126,7 @@
                   id="badgeNotificacoes"
                   class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                 >
-                  5
+                  0
                 </span>
               </button>
               <div
@@ -139,7 +139,7 @@
                   <span
                     class="badge bg-danger-subtle text-danger"
                     id="dropdownPendCount"
-                    >5 cards</span
+                    >0 cards</span
                   >
                 </div>
                 <p class="small text-muted mb-3">
@@ -166,24 +166,22 @@
 
             <div class="dropdown">
               <button
-                class="btn btn-light border d-flex align-items-center gap-2 rounded-pill px-3 py-1"
+                class="btn btn-light border d-flex align-items-center rounded-circle p-2"
+                aria-label="Perfil do usuário"
                 type="button"
                 data-bs-toggle="dropdown"
               >
                 <i class="bi bi-person-circle text-primary fs-5"></i>
-                <span
-                  class="small fw-semibold d-none d-sm-inline"
-                  id="navUserName"
-                  >Estudante IFRJ</span
-                >
               </button>
               <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                 <li>
+                  <span class="dropdown-item-text fw-semibold pb-0" id="navUserName">Estudante IFRJ</span>
+                </li>
+                <li>
                   <span
-                    class="dropdown-item-text small text-muted"
+                    class="dropdown-item-text small text-muted pt-0"
                     id="navUserEmail"
-                    >aluno@ifrj.edu.br</span
-                  >
+                  ></span>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
                 <li>
@@ -216,9 +214,7 @@
             ><i class="bi bi-patch-check-fill me-1"></i>Fonte Verificada • Sem
             IA Generativa</span
           >
-          <h1 class="h3 fw-bold mb-1">
-            Explorar Questões Técnicas (QuizAPI.io)
-          </h1>
+          <h1 class="h3 fw-bold mb-1">Explorar Questões Técnicas</h1>
           <p class="text-muted mb-0">
             Busque conceitos oficiais validados e importe para suas bibliotecas
             pessoais.
@@ -237,11 +233,10 @@
               >Tecnologia / Categoria</label
             >
             <select class="form-select" id="filtroTecnologia">
-              <option value="JavaScript">JavaScript</option>
-              <option value="Linux">Linux</option>
-              <option value="Docker">Docker</option>
-              <option value="SQL">SQL</option>
-              <option value="DevOps">DevOps</option>
+              <option value="18">Computers (Computação)</option>
+              <option value="30">Gadgets</option>
+              <option value="19">Mathematics (Matemática)</option>
+              <option value="17">Science &amp; Nature</option>
             </select>
           </div>
 
@@ -273,13 +268,13 @@
           <span class="visually-hidden">Carregando...</span>
         </div>
         <p class="text-muted mt-3 fw-medium">
-          Consultando base técnica da QuizAPI.io...
+          Consultando base técnica da Open Trivia DB...
         </p>
       </div>
 
       <!-- Grid de Flashcards (Até 6 cartões com Flip 3D) -->
       <div class="row g-4" id="gridResultadosAPI">
-        <!-- Renderizado via js/api-quiz.js -->
+        <!-- Renderizado via explorar.js -->
       </div>
     </main>
 
@@ -303,10 +298,7 @@
               Selecione o baralho de destino no Firestore:
             </p>
             <select class="form-select mb-3" id="selectBibliotecaDestino">
-              <option value="lib1">Arquitetura de Software</option>
-              <option value="lib2">Banco de Dados & SQL</option>
-              <option value="lib3">Linux & Redes</option>
-              <option value="lib4">Desenvolvimento Web JS</option>
+              <option value="">Carregando bibliotecas...</option>
             </select>
 
             <div class="bg-light p-3 rounded-3 border small">
@@ -347,7 +339,7 @@
           Académico • <span class="text-primary fw-semibold">IFRJ</span>
         </div>
         <div>
-          Arquitetura v3.0 • Sem IA Generativa • Dados via QuizAPI.io &amp;
+          Arquitetura v3.0 • Sem IA Generativa • Dados via Open Trivia DB &amp;
           Firebase
         </div>
       </div>
@@ -356,7 +348,8 @@
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../js/app-ui.js"></script>
+    <script type="module" src="../../js/auth-guard.js"></script>
 
-    <script src="explorar.js"></script>
+    <script type="module" src="explorar.js"></script>
   </body>
 </html>

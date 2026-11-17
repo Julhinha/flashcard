@@ -24,12 +24,65 @@ function mostrarToast(mensagem, tipo = 'success') {
   toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
 }
 
-// Simulação do disparo EmailJS (RN03 & RN05)
-function dispararEmailLembrete() {
-  mostrarToast('Enviando lembrete de revisão via EmailJS...', 'primary');
-  setTimeout(() => {
-    mostrarToast('E-mail de revisão enviado com sucesso para estudante@ifrj.edu.br!', 'success');
-    const statusEl = document.getElementById('statusUltimoEmail');
-    if (statusEl) statusEl.textContent = 'Último envio: Agora mesmo';
-  }, 900);
+// Disparo real de e-mail via EmailJS REST API (RN03 & RN05)
+const EMAILJS_CONFIG = {
+  serviceId: 'service_6uzztj7',
+  templateId: 'template_15h0lxf',
+  publicKey: 'ZtM6CKm2vtxsn8yhU'
+};
+// Mostra a data do último envio (vinda do Firestore, em usuarios/{uid})
+function exibirUltimoEnvio(iso) {
+  const statusEl = document.getElementById('statusUltimoEmail');
+  if (!statusEl) return;
+  statusEl.textContent = iso
+    ? `Último envio: ${new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}`
+    : 'Nenhum envio realizado ainda';
+}
+
+// automatico = true quando disparado pelo lembrete diário (sem toast de "enviando")
+async function dispararEmailLembrete(automatico = false) {
+  if (!window.usuarioEmail) {
+    mostrarToast('Aguarde o carregamento da sessão e tente novamente.', 'danger');
+    return;
+  }
+
+  mostrarToast(
+    automatico ? 'Enviando seu lembrete diário de revisão...' : 'Enviando lembrete de revisão via EmailJS...',
+    'primary'
+  );
+  try {
+    const resposta = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: EMAILJS_CONFIG.serviceId,
+        template_id: EMAILJS_CONFIG.templateId,
+        user_id: EMAILJS_CONFIG.publicKey,
+        template_params: {
+          to_email: window.usuarioEmail,
+          to_name: window.usuarioNome || window.usuarioEmail.split('@')[0],
+          cards_pendentes: window.cardsPendentes ?? 0,
+          link_revisao: new URL('../revisao/revisao.html', location.href).href,
+          tipo: 'revisao_pendente',
+          dias_inativo: 0,
+          assunto: `TI Flashcards: você tem ${window.cardsPendentes ?? 0} card(s) para revisar!`,
+          mensagem: 'Sua fila de repetição espaçada (Anki) está aguardando por você.',
+          destaque: `${window.cardsPendentes ?? 0} flashcard(s) pendente(s) para revisão hoje!`,
+          botao: 'Revisar Meus Cards Agora',
+          cor_destaque: (window.cardsPendentes ?? 0) > 0 ? '#dc3545' : '#0d6efd'
+        }
+      })
+    });
+    if (!resposta.ok) throw new Error(await resposta.text());
+
+    const agora = new Date().toISOString();
+    exibirUltimoEnvio(agora);
+    mostrarToast(`E-mail de revisão enviado com sucesso para ${window.usuarioEmail}!`, 'success');
+    if (window.salvarPerfil) {
+      await window.salvarPerfil({ ultimo_email_enviado_em: agora }).catch((e) => console.error('Erro ao salvar último envio:', e));
+    }
+  } catch (erro) {
+    console.error('Erro ao enviar e-mail via EmailJS:', erro);
+    mostrarToast('Não foi possível enviar o e-mail. Verifique o template do EmailJS.', 'danger');
+  }
 }

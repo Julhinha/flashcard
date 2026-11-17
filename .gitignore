@@ -1,0 +1,6 @@
+.DS_Store
+
+# Nunca versionar credenciais
+serviceAccount*.json
+*-firebase-adminsdk-*.json
+.env

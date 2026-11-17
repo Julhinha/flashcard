@@ -1,20 +1,23 @@
-// Configuração do Firebase (Substitua pelas chaves do seu projeto no Firebase Console)
-// Estrutura modular pronta para Firebase v10+ (ES Modules)
-/*
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// Importa os módulos oficiais do Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
+// Suas credenciais do projeto ti-flashcard-ifrj
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "seu-projeto.firebaseapp.com",
-  projectId: "seu-projeto",
-  storageBucket: "seu-projeto.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "1:000000000000:web:000000000000"
+  apiKey: "AIzaSyA0KO6KZS2MvVPmqM5Hb2d3gJEQgfEvUQs",
+  authDomain: "ti-flashcard-ifrj.firebaseapp.com",
+  projectId: "ti-flashcard-ifrj",
+  storageBucket: "ti-flashcard-ifrj.firebasestorage.app",
+  messagingSenderId: "77296619603",
+  appId: "1:77296619603:web:39743e4aba7fe1ddc776a6",
 };
 
-export const app = initializeApp(firebaseConfig);
+// Inicializa o Firebase e exporta os serviços para as outras telas usarem
+const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-*/
+export const googleProvider = new GoogleAuthProvider();
